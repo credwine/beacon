@@ -1662,7 +1662,229 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ---- Landing Page Demo Animation ----
+
+const DEMO_SCAMS = [
+    {
+        text: 'Subject: URGENT -- Your Apple ID has been compromised\n\nDear Customer,\n\nWe detected unauthorized access to your Apple ID from Russia. Your account will be PERMANENTLY LOCKED in 24 hours unless you verify immediately.\n\nClick here: http://apple-id-secure-verify.com/login\n\nApple Security Team',
+        score: 5,
+        label: 'DANGEROUS',
+        flags: [
+            'Fake urgency: "permanently locked in 24 hours"',
+            'Suspicious URL: apple-id-secure-verify.com is not Apple',
+            'Pressure tactic: threatens account deletion',
+            'Generic greeting: "Dear Customer" instead of your name'
+        ]
+    },
+    {
+        text: 'Hey! This is Mike from the IRS. We have been trying to reach you about your overdue tax payment of $4,892.31. A warrant has been issued for your arrest if this is not resolved today. Please purchase $4,892 in Apple gift cards and read us the numbers. Final notice.',
+        score: 3,
+        label: 'DANGEROUS',
+        flags: [
+            'IRS impersonation: IRS never calls demanding immediate payment',
+            'Gift card payment demand: no government accepts gift cards',
+            'Arrest threat: IRS does not threaten arrest by phone',
+            'Fabricated urgency: "must be resolved today"'
+        ]
+    },
+    {
+        text: 'Congratulations! You have been selected as the winner of our $1,000,000 International Lottery! Your ticket #47-29-81 was drawn March 15th. To claim your prize, send a processing fee of $499.99 via Western Union to our claims department. Contact: claims@intl-lottery-winners.net',
+        score: 2,
+        label: 'DANGEROUS',
+        flags: [
+            'Lottery scam: you cannot win a lottery you never entered',
+            'Upfront fee demand: legitimate lotteries never require fees',
+            'Western Union payment: untraceable, favored by scammers',
+            'Requests personal information: bank details and ID'
+        ]
+    }
+];
+
+let demoRunning = false;
+let demoAbortController = null;
+let demoPaused = false;
+
+function demoSleep(ms) {
+    return new Promise((resolve, reject) => {
+        const timer = setTimeout(resolve, ms);
+        if (demoAbortController) {
+            demoAbortController.signal.addEventListener('abort', () => {
+                clearTimeout(timer);
+                reject(new DOMException('Aborted', 'AbortError'));
+            });
+        }
+    });
+}
+
+async function runLandingDemo() {
+    if (demoRunning) return;
+    demoRunning = true;
+
+    const inputEl = document.getElementById('demoInput');
+    const resultEl = document.getElementById('demoResult');
+
+    if (!inputEl || !resultEl) {
+        demoRunning = false;
+        return;
+    }
+
+    let cycleIndex = 0;
+
+    while (demoRunning) {
+        demoAbortController = new AbortController();
+        const scam = DEMO_SCAMS[cycleIndex % DEMO_SCAMS.length];
+        cycleIndex++;
+
+        try {
+            // Reset state
+            resultEl.style.opacity = '0';
+            const typingSpan = inputEl.querySelector('.demo-typing');
+            if (typingSpan) typingSpan.textContent = '';
+
+            // Wait a beat before starting
+            await demoSleep(600);
+
+            // Phase 1: Typewriter effect
+            const chars = scam.text;
+            for (let i = 0; i < chars.length; i++) {
+                while (demoPaused) {
+                    await demoSleep(200);
+                }
+                if (typingSpan) typingSpan.textContent = chars.slice(0, i + 1);
+                const ch = chars[i];
+                let delay = 12;
+                if (ch === '\n') delay = 60;
+                else if (ch === '.' || ch === '!' || ch === '?') delay = 80;
+                else if (ch === ',') delay = 40;
+                await demoSleep(delay);
+            }
+
+            await demoSleep(400);
+
+            // Phase 2: Show "Analyzing..." pulse
+            resultEl.style.opacity = '1';
+            resultEl.innerHTML = '<div class="demo-analyzing">Analyzing with Gemma 4...</div>';
+            await demoSleep(1800);
+
+            // Phase 3: Restore result structure and animate score
+            resultEl.innerHTML = '';
+            const scoreContainer = document.createElement('div');
+            scoreContainer.className = 'demo-score-container';
+            const scoreDiv = document.createElement('div');
+            scoreDiv.className = 'demo-score';
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'demo-score-label';
+            scoreContainer.appendChild(scoreDiv);
+            scoreContainer.appendChild(labelDiv);
+            const newFlagsDiv = document.createElement('div');
+            newFlagsDiv.className = 'demo-flags';
+            resultEl.appendChild(scoreContainer);
+            resultEl.appendChild(newFlagsDiv);
+            resultEl.style.opacity = '1';
+
+            // Animate score from 100 down to target
+            const targetScore = scam.score;
+            const totalSteps = 60;
+            for (let step = 0; step <= totalSteps; step++) {
+                while (demoPaused) {
+                    await demoSleep(200);
+                }
+                const progress = step / totalSteps;
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const currentScore = Math.round(100 - (100 - targetScore) * eased);
+                scoreDiv.textContent = currentScore;
+
+                let color;
+                if (currentScore > 70) {
+                    color = '#10b981';
+                    labelDiv.textContent = 'SAFE';
+                } else if (currentScore > 50) {
+                    color = '#f59e0b';
+                    labelDiv.textContent = 'SUSPICIOUS';
+                } else if (currentScore > 20) {
+                    color = '#ef4444';
+                    labelDiv.textContent = 'HIGH RISK';
+                } else {
+                    color = '#dc2626';
+                    labelDiv.textContent = scam.label;
+                }
+                scoreDiv.style.color = color;
+                labelDiv.style.color = color;
+
+                await demoSleep(25);
+            }
+
+            scoreDiv.textContent = targetScore;
+            scoreDiv.style.color = '#dc2626';
+            labelDiv.textContent = scam.label;
+            labelDiv.style.color = '#dc2626';
+
+            await demoSleep(300);
+
+            // Phase 4: Reveal red flags one by one
+            const flagIcon = '<svg class="demo-flag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+            for (let i = 0; i < scam.flags.length; i++) {
+                while (demoPaused) {
+                    await demoSleep(200);
+                }
+                const flagItem = document.createElement('div');
+                flagItem.className = 'demo-flag-item';
+                flagItem.innerHTML = flagIcon + '<span>' + scam.flags[i] + '</span>';
+                newFlagsDiv.appendChild(flagItem);
+                flagItem.offsetHeight; // force reflow
+                await demoSleep(50);
+                flagItem.classList.add('visible');
+                await demoSleep(400);
+            }
+
+            // Phase 5: Hold the result for 3 seconds
+            await demoSleep(3000);
+
+            // Fade out
+            resultEl.style.opacity = '0';
+            await demoSleep(500);
+
+            if (typingSpan) typingSpan.textContent = '';
+
+        } catch (e) {
+            if (e.name === 'AbortError') break;
+            throw e;
+        }
+    }
+
+    demoRunning = false;
+}
+
+function stopLandingDemo() {
+    demoRunning = false;
+    if (demoAbortController) {
+        demoAbortController.abort();
+        demoAbortController = null;
+    }
+}
+
+// Auto-pause when demo scrolls out of view
+(function initDemoObserver() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const demoEl = document.querySelector('.hero-demo');
+        if (!demoEl) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                demoPaused = !entry.isIntersecting;
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(demoEl);
+    });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     lucide.createIcons();
+    // Start the landing demo if on the landing page
+    if (document.getElementById('landing') && document.getElementById('landing').style.display !== 'none') {
+        runLandingDemo();
+    }
 });

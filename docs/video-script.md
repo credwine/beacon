@@ -36,9 +36,12 @@ the numbers over the phone."
 "So I built Beacon. It's free. It's open source. And it runs entirely on your
 device -- powered by Google's Gemma 4 AI through Ollama."
 
-**[Quick montage: landing page scrolling, app switching between tabs]**
+**[Quick montage: landing page scrolling, dark mode toggle, language selector
+switching to Spanish, app switching between tabs]**
 
-"No cloud. No subscriptions. No data ever leaves your computer."
+"No cloud. No subscriptions. No data ever leaves your computer. It works in
+ten languages, installs as an app on your phone or desktop, and even has a
+dark mode."
 
 **[KEY MOMENT: Corey visibly toggles airplane mode ON on his laptop]**
 
@@ -46,7 +49,8 @@ device -- powered by Google's Gemma 4 AI through Ollama."
 
 **[Camera shows airplane mode icon in taskbar]**
 
-"Beacon still works. Because the AI runs right here, on my machine."
+"Beacon still works. Because it's a PWA -- the whole interface is cached
+offline -- and the AI runs right here, on my machine."
 
 ---
 
@@ -59,11 +63,12 @@ device -- powered by Google's Gemma 4 AI through Ollama."
 
 "Immediately -- before the AI even finishes thinking -- Beacon's rule-based
 pre-screener catches three red flags. Urgency pressure, authority
-impersonation, and a suspicious URL."
+impersonation, and a suspicious URL. That's the two-stage pipeline: instant
+feedback first, then the full AI analysis streams in token by token."
 
-**[Full Gemma 4 results appear with trust score animation]**
+**[Full Gemma 4 results stream in with trust score animation]**
 
-"And here's the full AI analysis. Trust score: 5 out of 100. Dangerous."
+"Trust score: 5 out of 100. Dangerous."
 
 "It found five red flags, classified this as a phishing attack, and -- this
 is the part I built for my grandmother --"
@@ -74,15 +79,20 @@ is the part I built for my grandmother --"
 warning. Just a clear, warm explanation of why this is dangerous and what
 to do instead."
 
+**[Click the screenshot upload button, upload an image of a suspicious text]**
+
+"And because Gemma 4 is multimodal, you can upload screenshots too. Take a
+photo of a suspicious text, drop it in, and Beacon reads and analyzes it."
+
 ---
 
-## Scene 4: Live Demo - Contract Reader (1:40 - 2:10)
+## Scene 4: Live Demo - Contract Reader + Trusted Contacts (1:40 - 2:10)
 **[Screen recording]**
 
 "But Beacon does more than catch scams. Here's a lease agreement with some
 concerning clauses."
 
-**[Paste contract, results appear]**
+**[Paste contract, results stream in]**
 
 "Beacon flags the predatory terms -- this landlord is trying to charge for
 normal wear and tear, which is illegal in most states. The mandatory
@@ -92,22 +102,31 @@ ask before signing."
 "This is the kind of analysis that costs hundreds of dollars from a lawyer.
 Beacon does it for free, on your laptop, in seconds."
 
+**[Quick cut: open Trusted Contacts panel, show adding a contact]**
+
+"And here's something I built specifically for families. You can add a
+trusted contact -- a son, daughter, caregiver -- and when Beacon detects
+a dangerous scam, they get notified. Because the people targeted by fraud
+are often isolated, and this closes that gap."
+
 ---
 
-## Scene 5: Technical Architecture + Screenshot Scanning (2:10 - 2:35)
-**[Architecture diagram: Pre-screener -> Gemma 4 -> Structured Output]**
+## Scene 5: History, Accessibility, and Architecture (2:10 - 2:35)
+**[Screen recording: open history drawer with Alt+H]**
 
-"Under the hood, Beacon uses a two-stage pipeline. First, a lightweight
-rule-based pre-screener gives instant feedback. Then Gemma 4's native
-function calling produces structured analysis -- trust scores, risk
-classifications, and red flag arrays."
+"Every analysis is saved in your history drawer -- stored locally, never in
+the cloud. You can filter by type, reload past analyses, and export or print
+any result."
 
-**[Quick demo: user uploads a screenshot of a suspicious text message]**
+**[Architecture diagram: Pre-screener -> Gemma 4 -> Structured Output via SSE]**
 
-"And because Gemma 4 is multimodal, you can scan screenshots too. Take a
-photo of a suspicious text, upload it, and Beacon reads and analyzes it."
+"Under the hood, Beacon uses a two-stage pipeline. A lightweight rule-based
+pre-screener gives instant feedback, then Gemma 4's native function calling
+produces structured analysis -- trust scores, risk classifications, and red
+flag arrays -- streamed via Server-Sent Events."
 
-"We also fine-tuned a specialized scam detection model using Unsloth."
+"We also fine-tuned a specialized scam detection model using Unsloth,
+trained on 50-plus examples covering 13 scam types."
 
 ---
 
@@ -139,11 +158,14 @@ just help the people who are already doing fine."
 
 ### Critical Success Factors (from past winners analysis)
 1. **Personal story is the hook** -- Corey's grandmother story is authentic and powerful. Lead with it.
-2. **Show airplane mode** -- Past winners visibly demonstrated offline capability. This is a key moment.
-3. **Two-stage pipeline demo** -- Show the instant pre-screen, then the AI analysis. This demonstrates engineering depth.
-4. **Plain-language explanation** -- Zoom into the explanation text. This is the emotional payoff.
-5. **Keep it authentic** -- iPhone camera is fine. Natural lighting. Don't over-produce. Past winners used simple setups.
-6. **No slides** -- Show the actual app running on a real device. No PowerPoints.
+2. **Show airplane mode** -- Past winners visibly demonstrated offline capability. The PWA angle makes this even stronger -- the whole UI works, not just the AI.
+3. **Two-stage pipeline demo** -- Show the instant pre-screen, then the streaming AI analysis. This demonstrates engineering depth.
+4. **Dark mode + language switch montage** -- Quick visual proof of polish and inclusivity. Don't dwell, just flash it.
+5. **Trusted Contacts** -- This is a differentiator. Show it. It connects back to the grandmother story.
+6. **History drawer** -- A quick Alt+H open is visual proof the app has depth.
+7. **Plain-language explanation** -- Zoom into the explanation text. This is the emotional payoff.
+8. **Keep it authentic** -- iPhone camera is fine. Natural lighting. Don't over-produce. Past winners used simple setups.
+9. **No slides** -- Show the actual app running on a real device. No PowerPoints.
 
 ### Equipment
 - Screen recording: OBS Studio (free)
@@ -155,13 +177,16 @@ just help the people who are already doing fine."
 ### Shot List
 1. Corey to camera -- grandmother story (0:00-0:30)
 2. Statistics on dark background (0:15-0:25)
-3. Airplane mode toggle (0:45-0:55) -- KEY MOMENT
-4. Screen recording: Scam Scanner with pre-screen + full analysis (0:55-1:40)
-5. Screen recording: Contract Reader (1:40-2:10)
-6. Architecture diagram (2:10-2:20)
-7. Screenshot scanning demo (2:20-2:30)
-8. Corey to camera -- closing message (2:35-3:00)
-9. Logo + links (2:55-3:00)
+3. Quick montage: dark mode toggle, language selector, tabs (0:30-0:40)
+4. Airplane mode toggle (0:45-0:55) -- KEY MOMENT
+5. Screen recording: Scam Scanner with pre-screen + streaming analysis (0:55-1:25)
+6. Screen recording: Screenshot upload for multimodal scan (1:25-1:40)
+7. Screen recording: Contract Reader with streaming results (1:40-2:00)
+8. Screen recording: Trusted Contacts panel (2:00-2:10)
+9. Screen recording: History drawer open via Alt+H (2:10-2:18)
+10. Architecture diagram (2:18-2:30)
+11. Corey to camera -- closing message (2:35-3:00)
+12. Logo + links (2:55-3:00)
 
 ### Music
 - 0:00-0:30: Soft, slightly somber piano (the problem)
@@ -173,3 +198,4 @@ just help the people who are already doing fine."
 - Cut between Corey and screen recordings frequently
 - Statistics should animate in one at a time (not all at once)
 - The airplane mode moment should have a brief pause for emphasis
+- The dark mode / language montage should be fast cuts (2-3 seconds each)

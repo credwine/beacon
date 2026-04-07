@@ -32,9 +32,15 @@ except ImportError:
     sys.exit(1)
 
 try:
-    from plyer import notification
+    from plyer import notification as plyer_notification
 except ImportError:
-    notification = None
+    plyer_notification = None
+
+try:
+    from win10toast import ToastNotifier
+    _toaster = ToastNotifier()
+except ImportError:
+    _toaster = None
 
 # ---- Configuration ----
 
@@ -185,50 +191,74 @@ def extract_json(text: str) -> dict:
 # ---- Notification ----
 
 def send_alert(result: dict):
-    """Send system notification for detected threat."""
+    """Send system notification for detected threat.
+
+    Tries multiple notification methods for cross-platform reliability:
+    1. win10toast (Windows 10/11 native toast)
+    2. plyer (cross-platform)
+    3. PowerShell fallback (Windows)
+    """
     severity = result.get("severity", "high").upper()
     threat_type = result.get("threat_type", "unknown").replace("_", " ").title()
     description = result.get("description", "Suspicious activity detected")
     recommendation = result.get("recommendation", "Close the suspicious page")
 
     title = f"Beacon Guard -- {severity} THREAT"
-    message = f"{threat_type}: {description}\n{recommendation}"
+    message = f"{threat_type}: {description}. {recommendation}"
 
     log.warning(f"ALERT: {title} -- {message}")
 
-    # System notification via plyer
-    if notification:
+    # Method 1: win10toast (most reliable on Windows)
+    if _toaster:
         try:
-            notification.notify(
+            _toaster.show_toast(
+                title,
+                message,
+                duration=10,
+                threaded=True,
+            )
+            return
+        except Exception as e:
+            log.debug(f"win10toast failed: {e}")
+
+    # Method 2: plyer (cross-platform)
+    if plyer_notification:
+        try:
+            plyer_notification.notify(
                 title=title,
                 message=message,
                 app_name="Beacon Guard",
                 timeout=10,
             )
+            return
         except Exception as e:
-            log.error(f"Notification failed: {e}")
-    else:
-        # Fallback: Windows toast via PowerShell
-        try:
-            import subprocess
-            ps_cmd = f'''
-            [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null;
-            $balloon = New-Object System.Windows.Forms.NotifyIcon;
-            $balloon.Icon = [System.Drawing.SystemIcons]::Warning;
-            $balloon.BalloonTipTitle = "{title}";
-            $balloon.BalloonTipText = "{message}";
-            $balloon.Visible = $true;
-            $balloon.ShowBalloonTip(10000);
-            Start-Sleep -Seconds 11;
-            $balloon.Dispose();
-            '''
-            subprocess.Popen(
-                ["powershell", "-Command", ps_cmd],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            )
-        except Exception:
-            pass  # Silent fail -- the log is the last resort
+            log.debug(f"plyer failed: {e}")
+
+    # Method 3: PowerShell fallback (Windows)
+    try:
+        import subprocess
+        # Escape quotes for PowerShell
+        safe_title = title.replace("'", "''")
+        safe_msg = message.replace("'", "''")
+        ps_cmd = f"""
+        Add-Type -AssemblyName System.Windows.Forms;
+        $n = New-Object System.Windows.Forms.NotifyIcon;
+        $n.Icon = [System.Drawing.SystemIcons]::Warning;
+        $n.BalloonTipTitle = '{safe_title}';
+        $n.BalloonTipText = '{safe_msg}';
+        $n.BalloonTipIcon = 'Error';
+        $n.Visible = $true;
+        $n.ShowBalloonTip(10000);
+        Start-Sleep -Seconds 11;
+        $n.Dispose();
+        """
+        subprocess.Popen(
+            ["powershell", "-Command", ps_cmd],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        pass  # Log is the last resort
 
 
 def save_alert(result: dict):

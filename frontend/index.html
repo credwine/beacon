@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beacon - AI-Powered Protection for Everyone</title>
+    <meta name="description" content="Free, private, AI-powered scam detection and rights protection. Runs 100% on your device. No data ever leaves.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Beacon - AI-Powered Protection for Everyone">
+    <meta property="og:description" content="Free, private scam detection powered by Gemma 4. Runs entirely on your device.">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <!-- Landing Section -->
+    <section id="landing" class="landing">
+        <nav class="nav">
+            <div class="nav-brand">
+                <div class="beacon-icon">
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+                        <circle cx="16" cy="16" r="9" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                        <circle cx="16" cy="16" r="4" fill="currentColor"/>
+                        <line x1="16" y1="2" x2="16" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <span class="nav-title">Beacon</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#privacy">Privacy</a>
+                <a href="https://github.com/forgeDev-studio/beacon" target="_blank" rel="noopener">GitHub</a>
+                <button class="btn btn-primary btn-sm" onclick="showApp()">Launch App</button>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <div class="hero-badge">Powered by Gemma 4 &middot; 100% Local &middot; Always Free</div>
+            <h1>Your AI Guardian<br>Against Scams & Fraud</h1>
+            <p class="hero-sub">
+                Beacon uses Google's Gemma 4 AI running entirely on your device to detect scams,
+                explain contracts in plain English, and help you know your rights.
+                No data ever leaves your computer. No subscriptions. No catch.
+            </p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg" onclick="showApp()">
+                    <i data-lucide="shield-check"></i>
+                    Start Protecting Yourself
+                </button>
+                <a href="#how-it-works" class="btn btn-ghost btn-lg">
+                    <i data-lucide="play-circle"></i>
+                    See How It Works
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">$28.3B</span>
+                    <span class="stat-label">Lost to fraud in 2023 (FTC)</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">1 in 3</span>
+                    <span class="stat-label">Seniors targeted by scams yearly</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">0 bytes</span>
+                    <span class="stat-label">Of your data sent to the cloud</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div id="features" class="features">
+            <h2>Three Tools. Total Protection.</h2>
+            <div class="features-grid">
+                <div class="feature-card" onclick="showApp('scanner')">
+                    <div class="feature-icon feature-icon-red">
+                        <i data-lucide="scan-eye"></i>
+                    </div>
+                    <h3>Scam Scanner</h3>
+                    <p>Paste any suspicious email, text, or message. Beacon analyzes it instantly and tells you exactly what to watch out for -- in plain language.</p>
+                    <ul class="feature-list">
+                        <li>Instant trust score (0-100)</li>
+                        <li>Identifies scam type and tactics</li>
+                        <li>Plain-language explanation</li>
+                        <li>Actionable next steps</li>
+                    </ul>
+                </div>
+                <div class="feature-card" onclick="showApp('contracts')">
+                    <div class="feature-icon feature-icon-amber">
+                        <i data-lucide="file-search"></i>
+                    </div>
+                    <h3>Contract Reader</h3>
+                    <p>Upload any contract, lease, or legal document. Beacon breaks down the fine print and flags anything that could cost you.</p>
+                    <ul class="feature-list">
+                        <li>Plain-English translation</li>
+                        <li>Hidden fee detection</li>
+                        <li>Predatory clause alerts</li>
+                        <li>Questions to ask before signing</li>
+                    </ul>
+                </div>
+                <div class="feature-card" onclick="showApp('rights')">
+                    <div class="feature-icon feature-icon-blue">
+                        <i data-lucide="scale"></i>
+                    </div>
+                    <h3>Rights Navigator</h3>
+                    <p>Describe your situation and Beacon tells you your rights as a tenant, employee, consumer, or patient -- plus free resources to help.</p>
+                    <ul class="feature-list">
+                        <li>Know your legal protections</li>
+                        <li>Step-by-step action plans</li>
+                        <li>Free legal aid resources</li>
+                        <li>Important deadlines</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy Section -->
+        <div id="privacy" class="privacy-section">
+            <div class="privacy-content">
+                <h2>Privacy Is Not Optional. It's the Foundation.</h2>
+                <p>
+                    Beacon is built on a radical idea: your personal information should never leave your device.
+                    Every analysis, every document you check, every question you ask -- it all happens locally on
+                    your computer using Gemma 4, Google's open AI model.
+                </p>
+                <div class="privacy-grid">
+                    <div class="privacy-item">
+                        <i data-lucide="wifi-off"></i>
+                        <h4>Works Offline</h4>
+                        <p>No internet required after initial setup. Perfect for areas with limited connectivity.</p>
+                    </div>
+                    <div class="privacy-item">
+                        <i data-lucide="database"></i>
+                        <h4>No Cloud Storage</h4>
+                        <p>Your data stays on your device. Nothing is sent to any server, ever.</p>
+                    </div>
+                    <div class="privacy-item">
+                        <i data-lucide="lock"></i>
+                        <h4>No Account Required</h4>
+                        <p>No sign-up, no login, no tracking. Just open and use.</p>
+                    </div>
+                    <div class="privacy-item">
+                        <i data-lucide="code-2"></i>
+                        <h4>Fully Open Source</h4>
+                        <p>Every line of code is public. Audit it yourself. Trust, but verify.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div id="how-it-works" class="how-section">
+            <h2>How Beacon Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Install Ollama</h4>
+                    <p>One-click install of Ollama, the local AI runtime. Free and open source.</p>
+                </div>
+                <div class="step-arrow">
+                    <i data-lucide="arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Download Gemma 4</h4>
+                    <p>Pull the Gemma 4 model. It downloads once and runs forever -- no subscription.</p>
+                </div>
+                <div class="step-arrow">
+                    <i data-lucide="arrow-right"></i>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Launch Beacon</h4>
+                    <p>Open Beacon and start scanning. Everything runs locally on your machine.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Beacon is free, open-source software. Built for the Gemma 4 Good Hackathon.</p>
+            <p>Made with purpose by <a href="https://forgedev.studio" target="_blank">Forge Dev.studio</a></p>
+        </footer>
+    </section>
+
+    <!-- Application Section (hidden by default) -->
+    <section id="app" class="app-section" style="display:none;">
+        <nav class="app-nav">
+            <div class="app-nav-left">
+                <button class="btn btn-ghost btn-sm" onclick="showLanding()">
+                    <i data-lucide="arrow-left"></i>
+                    Back
+                </button>
+                <div class="beacon-icon-sm">
+                    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="9" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                        <circle cx="16" cy="16" r="4" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="app-nav-title">Beacon</span>
+            </div>
+            <div class="app-tabs">
+                <button class="tab active" data-tab="scanner" onclick="switchTab('scanner')">
+                    <i data-lucide="scan-eye"></i>
+                    <span>Scam Scanner</span>
+                </button>
+                <button class="tab" data-tab="contracts" onclick="switchTab('contracts')">
+                    <i data-lucide="file-search"></i>
+                    <span>Contract Reader</span>
+                </button>
+                <button class="tab" data-tab="rights" onclick="switchTab('rights')">
+                    <i data-lucide="scale"></i>
+                    <span>Rights Navigator</span>
+                </button>
+            </div>
+            <div class="app-nav-right">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Checking...</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Scanner Panel -->
+        <div id="panel-scanner" class="panel active">
+            <div class="panel-layout">
+                <div class="input-side">
+                    <div class="input-header">
+                        <h2>Scan a Message</h2>
+                        <p>Paste any suspicious email, text, letter, or message below.</p>
+                    </div>
+                    <textarea
+                        id="scanInput"
+                        class="input-textarea"
+                        placeholder="Paste the suspicious message here...
+
+Example: 'Dear valued customer, your account has been compromised. Click here immediately to verify your identity or your account will be permanently closed within 24 hours...'"
+                        rows="12"
+                    ></textarea>
+                    <div class="input-extras">
+                        <textarea
+                            id="scanContext"
+                            class="input-context"
+                            placeholder="Optional: Add context (e.g., 'I received this via text from an unknown number')"
+                            rows="2"
+                        ></textarea>
+                    </div>
+                    <div class="input-actions">
+                        <button class="btn btn-primary" onclick="runScan()" id="scanBtn">
+                            <i data-lucide="shield-check"></i>
+                            Analyze Message
+                        </button>
+                        <button class="btn btn-ghost" onclick="loadScanExample()">
+                            <i data-lucide="file-text"></i>
+                            Try Example
+                        </button>
+                        <button class="btn btn-ghost" onclick="clearScan()">
+                            <i data-lucide="trash-2"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="result-side" id="scanResult">
+                    <div class="result-placeholder">
+                        <i data-lucide="shield"></i>
+                        <h3>Results will appear here</h3>
+                        <p>Paste a message and click "Analyze" to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contracts Panel -->
+        <div id="panel-contracts" class="panel">
+            <div class="panel-layout">
+                <div class="input-side">
+                    <div class="input-header">
+                        <h2>Analyze a Document</h2>
+                        <p>Paste contract text, lease terms, loan agreements, or any legal document.</p>
+                    </div>
+                    <textarea
+                        id="contractInput"
+                        class="input-textarea"
+                        placeholder="Paste the contract or document text here..."
+                        rows="14"
+                    ></textarea>
+                    <div class="input-extras">
+                        <select id="contractType" class="input-select">
+                            <option value="">Document type (optional)</option>
+                            <option value="lease">Residential Lease</option>
+                            <option value="employment">Employment Contract</option>
+                            <option value="loan">Loan Agreement</option>
+                            <option value="insurance">Insurance Policy</option>
+                            <option value="medical">Medical Bill</option>
+                            <option value="tos">Terms of Service</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-actions">
+                        <button class="btn btn-primary" onclick="runContract()" id="contractBtn">
+                            <i data-lucide="file-search"></i>
+                            Analyze Document
+                        </button>
+                        <button class="btn btn-ghost" onclick="loadContractExample()">
+                            <i data-lucide="file-text"></i>
+                            Try Example
+                        </button>
+                        <button class="btn btn-ghost" onclick="clearContract()">
+                            <i data-lucide="trash-2"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="result-side" id="contractResult">
+                    <div class="result-placeholder">
+                        <i data-lucide="file-search"></i>
+                        <h3>Results will appear here</h3>
+                        <p>Paste a document and click "Analyze" to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rights Panel -->
+        <div id="panel-rights" class="panel">
+            <div class="panel-layout">
+                <div class="input-side">
+                    <div class="input-header">
+                        <h2>Know Your Rights</h2>
+                        <p>Describe your situation and Beacon will explain your legal protections.</p>
+                    </div>
+                    <textarea
+                        id="rightsInput"
+                        class="input-textarea"
+                        placeholder="Describe your situation...
+
+Example: 'My landlord is refusing to return my security deposit. I lived in the apartment for 2 years, left it clean, and gave 30 days notice. They say they're keeping it for normal wear and tear.'"
+                        rows="10"
+                    ></textarea>
+                    <div class="input-extras">
+                        <select id="rightsCategory" class="input-select">
+                            <option value="">Category (optional)</option>
+                            <option value="tenant">Tenant / Housing</option>
+                            <option value="employee">Employee / Workplace</option>
+                            <option value="consumer">Consumer / Shopping</option>
+                            <option value="patient">Patient / Medical</option>
+                            <option value="debt">Debt / Collections</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="input-actions">
+                        <button class="btn btn-primary" onclick="runRights()" id="rightsBtn">
+                            <i data-lucide="scale"></i>
+                            Find My Rights
+                        </button>
+                        <button class="btn btn-ghost" onclick="loadRightsExample()">
+                            <i data-lucide="file-text"></i>
+                            Try Example
+                        </button>
+                        <button class="btn btn-ghost" onclick="clearRights()">
+                            <i data-lucide="trash-2"></i>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="result-side" id="rightsResult">
+                    <div class="result-placeholder">
+                        <i data-lucide="scale"></i>
+                        <h3>Results will appear here</h3>
+                        <p>Describe your situation and click "Find My Rights" to get started.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

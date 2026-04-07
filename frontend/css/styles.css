@@ -1607,6 +1607,83 @@ a:hover {
 }
 
 /* ============================================
+   Export Bar
+   ============================================ */
+
+.export-bar {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border);
+}
+
+.export-bar .btn {
+    gap: var(--space-xs);
+}
+
+.export-bar .btn i, .export-bar .btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* Copy Toast */
+.copy-toast {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 1000;
+    display: none;
+}
+
+.copy-toast-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--success);
+    color: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.copy-toast-content i, .copy-toast-content svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+@media print {
+    .app-nav,
+    .input-side,
+    .export-bar,
+    .history-drawer,
+    .history-overlay,
+    .alert-toast,
+    .copy-toast {
+        display: none !important;
+    }
+
+    .app-section {
+        min-height: auto;
+    }
+
+    .panel-layout {
+        display: block;
+    }
+
+    .result-side {
+        padding: 0;
+    }
+}
+
+/* ============================================
    Responsive
    ============================================ */
 

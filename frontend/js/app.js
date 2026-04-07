@@ -533,6 +533,61 @@ function clearScan() {
     lucide.createIcons();
 }
 
+// ---- Quick Scan (pre-screener only, instant, no AI needed) ----
+
+async function runQuickScan() {
+    const content = document.getElementById('scanInput').value.trim();
+    if (!content) return;
+    const btn = document.getElementById('quickScanBtn');
+    const resultDiv = document.getElementById('scanResult');
+    btn.disabled = true;
+    try {
+        const res = await fetch('/api/scan/prescreen', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const score = data.preliminary_score;
+        let colorClass, bgClass;
+        if (score <= 20) { colorClass = 'score-dangerous'; bgClass = 'bg-dangerous'; }
+        else if (score <= 40) { colorClass = 'score-high-risk'; bgClass = 'bg-high-risk'; }
+        else if (score <= 60) { colorClass = 'score-suspicious'; bgClass = 'bg-suspicious'; }
+        else if (score <= 80) { colorClass = 'score-uncertain'; bgClass = 'bg-uncertain'; }
+        else { colorClass = 'score-safe'; bgClass = 'bg-safe'; }
+        const riskLabel = score <= 20 ? 'DANGEROUS' : score <= 40 ? 'HIGH RISK' : score <= 60 ? 'SUSPICIOUS' : score <= 80 ? 'UNCERTAIN' : 'LIKELY SAFE';
+        resultDiv.innerHTML = `
+            <div class="trust-score-display ${bgClass}" style="margin-bottom:1rem;">
+                <div class="trust-score-value ${colorClass}" style="font-size:3rem;">${score}</div>
+                <div class="trust-score-label ${colorClass}">${riskLabel}</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">Quick Scan (rule-based, instant)</div>
+            </div>
+            ${data.flag_count > 0 ? `
+            <div class="result-section">
+                <div class="result-section-title">Red Flags Found (${data.flag_count})</div>
+                <ul class="red-flags-list">
+                    ${data.instant_flags.map(f => `<li class="red-flag-item"><svg class="red-flag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>${f}</li>`).join('')}
+                </ul>
+            </div>` : `
+            <div class="result-section">
+                <div class="result-card" style="border-left:3px solid var(--success);"><div class="result-text">No immediate red flags detected. For thorough AI analysis, use Deep Scan.</div></div>
+            </div>`}
+            <div class="result-section" style="margin-top:1rem;">
+                <div class="result-card" style="background:var(--info-bg);border:1px solid var(--info-border);">
+                    <div class="result-text" style="font-size:0.85rem;color:#1e40af;">Quick Scan uses pattern matching and runs instantly without AI. For comprehensive analysis with explanations, use <strong>Deep Scan</strong>.</div>
+                </div>
+            </div>`;
+        lucide.createIcons();
+        if (typeof beaconHistory !== 'undefined') {
+            beaconHistory.save('scan', content, { trust_score: score, risk_level: riskLabel, scam_type: 'Quick Scan', red_flags: data.instant_flags, explanation: 'Quick Scan (rule-based)', recommended_actions: [], safe_alternatives: '' });
+        }
+    } catch (err) {
+        resultDiv.innerHTML = `<div class="result-placeholder"><h3>Quick scan failed</h3><p>${err.message}</p></div>`;
+        lucide.createIcons();
+    } finally { btn.disabled = false; }
+}
+
 async function runScan() {
     const content = document.getElementById('scanInput').value.trim();
     if (!content && !scanImageB64) return;
@@ -702,6 +757,11 @@ function renderScanResult(data, container) {
                 <div class="result-text">${data.safe_alternatives}</div>
             </div>
         </div>` : ''}
+
+        <div class="export-bar">
+            <button onclick="printResults('scan')" class="btn btn-ghost btn-sm"><i data-lucide="printer"></i> Print</button>
+            <button onclick="copyResults('scan')" class="btn btn-ghost btn-sm"><i data-lucide="copy"></i> Copy</button>
+        </div>
     `;
 }
 
@@ -861,6 +921,11 @@ function renderContractResult(data, container) {
                 `).join('')}
             </ul>
         </div>` : ''}
+
+        <div class="export-bar">
+            <button onclick="printResults('contract')" class="btn btn-ghost btn-sm"><i data-lucide="printer"></i> Print</button>
+            <button onclick="copyResults('contract')" class="btn btn-ghost btn-sm"><i data-lucide="copy"></i> Copy</button>
+        </div>
     `;
 }
 
@@ -1029,6 +1094,11 @@ function renderRightsResult(data, container) {
             <div style="font-size:0.8rem;color:var(--text-muted);font-style:italic;">
                 This is educational information, not legal advice. For your specific situation, consider consulting with a legal professional through the free resources listed above.
             </div>
+        </div>
+
+        <div class="export-bar">
+            <button onclick="printResults('rights')" class="btn btn-ghost btn-sm"><i data-lucide="printer"></i> Print</button>
+            <button onclick="copyResults('rights')" class="btn btn-ghost btn-sm"><i data-lucide="copy"></i> Copy</button>
         </div>
     `;
 }
@@ -1226,6 +1296,52 @@ function showAlertToast(message) {
     }, 5000);
 }
 
+// ---- Dark Mode ----
+
+function toggleTheme() {
+    const root = document.documentElement;
+    const currentTheme = root.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', newTheme);
+    localStorage.setItem('beacon-theme', newTheme);
+    updateThemeIcons(newTheme);
+}
+
+function updateThemeIcons(theme) {
+    const isDark = theme === 'dark';
+    document.querySelectorAll('.theme-icon-moon').forEach(el => {
+        el.style.display = isDark ? 'none' : '';
+    });
+    document.querySelectorAll('.theme-icon-sun').forEach(el => {
+        el.style.display = isDark ? '' : 'none';
+    });
+}
+
+function initTheme() {
+    const saved = localStorage.getItem('beacon-theme');
+    let theme;
+    if (saved) {
+        theme = saved;
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        theme = 'dark';
+    } else {
+        theme = 'light';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeIcons(theme);
+
+    // Listen for OS theme changes when no explicit preference is saved
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!localStorage.getItem('beacon-theme')) {
+                const osTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', osTheme);
+                updateThemeIcons(osTheme);
+            }
+        });
+    }
+}
+
 // ---- Initialize ----
 
 // Override switchTab to load settings data when settings tab is opened
@@ -1275,5 +1391,6 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     lucide.createIcons();
 });

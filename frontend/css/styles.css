@@ -65,6 +65,64 @@
 }
 
 /* ============================================
+   Dark Mode
+   ============================================ */
+
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --bg-card: #1e293b;
+    --bg-input: #1e293b;
+    --bg-hover: #334155;
+    --border: #334155;
+    --border-focus: #60a5fa;
+    --text: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --danger-bg: #450a0a;
+    --danger-border: #7f1d1d;
+    --warning-bg: #451a03;
+    --warning-border: #78350f;
+    --success-bg: #052e16;
+    --success-border: #14532d;
+    --info-bg: #172554;
+    --info-border: #1e3a5f;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --bg: #0f172a;
+        --bg-card: #1e293b;
+        --bg-input: #1e293b;
+        --bg-hover: #334155;
+        --border: #334155;
+        --border-focus: #60a5fa;
+        --text: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+
+        --danger-bg: #450a0a;
+        --danger-border: #7f1d1d;
+        --warning-bg: #451a03;
+        --warning-border: #78350f;
+        --success-bg: #052e16;
+        --success-border: #14532d;
+        --info-bg: #172554;
+        --info-border: #1e3a5f;
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ============================================
    Reset & Base
    ============================================ */
 
@@ -186,6 +244,16 @@ a:hover {
 
 .btn-primary:active {
     transform: translateY(0);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--beacon-primary);
+    border: 1.5px solid var(--beacon-primary);
+}
+
+.btn-outline:hover {
+    background: var(--info-bg);
 }
 
 .btn-ghost {
@@ -1403,6 +1471,10 @@ a:hover {
         transform: rotate(90deg);
     }
 
+    .history-drawer {
+        width: 100vw;
+    }
+
     .app-tabs {
         gap: 0;
     }
@@ -1722,6 +1794,157 @@ a:hover {
         right: var(--space-md);
         left: var(--space-md);
     }
+}
+
+/* ============================================
+   Dark Mode Overrides
+   ============================================ */
+
+/* Theme toggle button */
+.theme-toggle {
+    padding: 0.4rem;
+    border-radius: var(--radius-sm);
+}
+
+.theme-toggle i, .theme-toggle svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Privacy section: already dark in light mode, lighten slightly in dark mode */
+[data-theme="dark"] .privacy-section {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+[data-theme="dark"] .privacy-content > p {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .privacy-item {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .privacy-item p {
+    color: #cbd5e1;
+}
+
+/* Fix hardcoded colors for dark mode */
+[data-theme="dark"] .red-flag-item {
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .action-item {
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .resource-name {
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .resource-desc {
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .alert-history-type {
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .bg-high-risk {
+    background: #450a0a;
+}
+
+[data-theme="dark"] .history-score-high-risk {
+    background: #450a0a;
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .history-score-uncertain {
+    background: var(--bg-hover);
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .bg-uncertain {
+    background: var(--bg-hover);
+}
+
+[data-theme="dark"] .trust-score-ring .bg-ring {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+/* OS preference dark mode variants (same fixes) */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .privacy-section {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    }
+
+    :root:not([data-theme="light"]) .privacy-content > p {
+        color: #cbd5e1;
+    }
+
+    :root:not([data-theme="light"]) .privacy-item {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    :root:not([data-theme="light"]) .privacy-item p {
+        color: #cbd5e1;
+    }
+
+    :root:not([data-theme="light"]) .red-flag-item {
+        color: #fca5a5;
+    }
+
+    :root:not([data-theme="light"]) .action-item {
+        color: #93c5fd;
+    }
+
+    :root:not([data-theme="light"]) .resource-name {
+        color: #6ee7b7;
+    }
+
+    :root:not([data-theme="light"]) .resource-desc {
+        color: #6ee7b7;
+    }
+
+    :root:not([data-theme="light"]) .alert-history-type {
+        color: #fca5a5;
+    }
+
+    :root:not([data-theme="light"]) .bg-high-risk {
+        background: #450a0a;
+    }
+
+    :root:not([data-theme="light"]) .history-score-high-risk {
+        background: #450a0a;
+        color: #fca5a5;
+    }
+
+    :root:not([data-theme="light"]) .history-score-uncertain {
+        background: var(--bg-hover);
+        color: var(--text-muted);
+    }
+
+    :root:not([data-theme="light"]) .bg-uncertain {
+        background: var(--bg-hover);
+    }
+
+    :root:not([data-theme="light"]) .trust-score-ring .bg-ring {
+        stroke: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Smooth transition for theme switching */
+html {
+    color-scheme: light dark;
+}
+
+html, body,
+.app-nav, .history-drawer, .feature-card,
+.result-card, .right-item, .contact-item,
+.input-textarea, .input-context, .input-select,
+.language-select, .hero-stats {
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 /* Screen reader only */

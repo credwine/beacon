@@ -51,6 +51,10 @@
                 <a href="#features">Features</a>
                 <a href="#privacy">Privacy</a>
                 <a href="https://github.com/credwine/beacon" target="_blank" rel="noopener">GitHub</a>
+                <button class="btn btn-ghost btn-sm theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">
+                    <i data-lucide="moon" class="theme-icon-moon"></i>
+                    <i data-lucide="sun" class="theme-icon-sun" style="display:none;"></i>
+                </button>
                 <button class="btn btn-primary btn-sm" onclick="showApp()">Launch App</button>
             </div>
         </nav>
@@ -72,6 +76,28 @@
                     <i data-lucide="play-circle"></i>
                     See How It Works
                 </a>
+            </div>
+            <div class="hero-demo">
+                <div class="demo-window">
+                    <div class="demo-header">
+                        <div class="demo-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="demo-title">Beacon Scam Scanner</span>
+                    </div>
+                    <div class="demo-content">
+                        <div class="demo-input" id="demoInput">
+                            <span class="demo-typing"></span>
+                        </div>
+                        <div class="demo-result" id="demoResult" style="opacity:0;">
+                            <div class="demo-score-container">
+                                <div class="demo-score" id="demoScore">5</div>
+                                <div class="demo-score-label">DANGEROUS</div>
+                            </div>
+                            <div class="demo-flags" id="demoFlags"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="hero-stats">
                 <div class="stat">
@@ -243,6 +269,10 @@
                 </button>
             </div>
             <div class="app-nav-right">
+                <button class="btn btn-ghost btn-sm theme-toggle" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode">
+                    <i data-lucide="moon" class="theme-icon-moon"></i>
+                    <i data-lucide="sun" class="theme-icon-sun" style="display:none;"></i>
+                </button>
                 <select id="languageSelector" class="language-select" onchange="changeLanguage(this.value)" aria-label="Select language">
                     <option value="en">English</option>
                     <option value="es">Espanol</option>
@@ -300,7 +330,11 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                     <div class="input-actions">
                         <button class="btn btn-primary" onclick="runScan()" id="scanBtn">
                             <i data-lucide="shield-check"></i>
-                            Analyze Message
+                            Deep Scan
+                        </button>
+                        <button class="btn btn-outline" onclick="runQuickScan()" id="quickScanBtn" title="Instant rule-based check (no AI needed)">
+                            <i data-lucide="zap"></i>
+                            Quick Scan
                         </button>
                         <button class="btn btn-ghost" onclick="loadScanExample()">
                             <i data-lucide="file-text"></i>

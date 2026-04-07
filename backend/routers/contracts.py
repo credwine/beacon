@@ -1,6 +1,8 @@
 """Contract analysis API endpoints."""
 
+import traceback
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from backend.services.contract_analyzer import analyze_contract
 
@@ -20,4 +22,9 @@ async def analyze(req: ContractRequest):
     if len(req.content) > 100000:
         raise HTTPException(status_code=400, detail="Content exceeds 100,000 character limit")
 
-    return await analyze_contract(req.content, req.document_type)
+    try:
+        result = await analyze_contract(req.content, req.document_type)
+        return JSONResponse(content=result)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

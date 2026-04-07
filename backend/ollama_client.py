@@ -9,7 +9,7 @@ from backend.config import OLLAMA_BASE_URL, GEMMA_MODEL, MAX_TOKENS, TEMPERATURE
 async def generate(prompt: str, system: str = "", model: str = None) -> str:
     """Generate a complete response from Gemma 4 via Ollama."""
     model = model or GEMMA_MODEL
-    async with httpx.AsyncClient(timeout=120.0) as client:
+    async with httpx.AsyncClient(timeout=300.0) as client:
         response = await client.post(
             f"{OLLAMA_BASE_URL}/api/generate",
             json={
@@ -30,7 +30,7 @@ async def generate(prompt: str, system: str = "", model: str = None) -> str:
 async def generate_stream(prompt: str, system: str = "", model: str = None) -> AsyncGenerator[str, None]:
     """Stream response tokens from Gemma 4 via Ollama."""
     model = model or GEMMA_MODEL
-    async with httpx.AsyncClient(timeout=120.0) as client:
+    async with httpx.AsyncClient(timeout=300.0) as client:
         async with client.stream(
             "POST",
             f"{OLLAMA_BASE_URL}/api/generate",
@@ -71,7 +71,7 @@ async def generate_with_tools(prompt: str, system: str = "", tools: list = None,
     if tools:
         payload["tools"] = tools
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
+    async with httpx.AsyncClient(timeout=300.0) as client:
         response = await client.post(
             f"{OLLAMA_BASE_URL}/api/generate",
             json=payload,
@@ -100,7 +100,7 @@ async def chat(messages: list, system: str = "", model: str = None, tools: list 
     if tools:
         payload["tools"] = tools
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
+    async with httpx.AsyncClient(timeout=300.0) as client:
         response = await client.post(
             f"{OLLAMA_BASE_URL}/api/chat",
             json=payload,
@@ -117,7 +117,7 @@ async def chat_stream(messages: list, system: str = "", model: str = None) -> As
         formatted_messages.append({"role": "system", "content": system})
     formatted_messages.extend(messages)
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
+    async with httpx.AsyncClient(timeout=300.0) as client:
         async with client.stream(
             "POST",
             f"{OLLAMA_BASE_URL}/api/chat",

@@ -1,6 +1,8 @@
 """Rights navigator API endpoints."""
 
+import traceback
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from backend.services.rights_navigator import navigate_rights
 
@@ -20,4 +22,9 @@ async def get_rights(req: RightsRequest):
     if len(req.situation) > 10000:
         raise HTTPException(status_code=400, detail="Description exceeds 10,000 character limit")
 
-    return await navigate_rights(req.situation, req.category)
+    try:
+        result = await navigate_rights(req.situation, req.category)
+        return JSONResponse(content=result)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

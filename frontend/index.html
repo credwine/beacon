@@ -255,6 +255,17 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                             placeholder="Optional: Add context (e.g., 'I received this via text from an unknown number')"
                             rows="2"
                         ></textarea>
+                        <div class="image-upload" id="imageUploadArea">
+                            <input type="file" id="scanImage" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+                            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('scanImage').click()" style="margin-top:0.5rem;">
+                                <i data-lucide="camera"></i>
+                                Upload Screenshot (multimodal)
+                            </button>
+                            <div id="imagePreview" style="display:none;margin-top:0.5rem;">
+                                <img id="previewImg" style="max-height:80px;border-radius:6px;border:1px solid var(--border);">
+                                <button class="btn btn-ghost btn-sm" onclick="clearImage()" style="margin-left:0.5rem;">Remove</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="input-actions">
                         <button class="btn btn-primary" onclick="runScan()" id="scanBtn">

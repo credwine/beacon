@@ -1,8 +1,13 @@
-"""Scam analysis service using Gemma 4 with structured output via function calling."""
+"""Scam analysis service using Gemma 4 with structured output via function calling.
 
+Supports both text and image (multimodal) analysis using Gemma 4's native vision capabilities.
+"""
+
+import base64
 import json
 from pathlib import Path
 from backend.ollama_client import chat
+from backend.config import GEMMA_VISION_MODEL
 
 SYSTEM_PROMPT = (Path(__file__).parent.parent / "prompts" / "scam_system.txt").read_text()
 
@@ -56,13 +61,24 @@ SCAM_ANALYSIS_TOOL = {
 }
 
 
-async def analyze_message(content: str, context: str = "") -> dict:
-    """Analyze a message for scam indicators using Gemma 4."""
-    user_prompt = f"Analyze the following message for scam or fraud indicators:\n\n---\n{content}\n---"
-    if context:
-        user_prompt += f"\n\nAdditional context from the user: {context}"
+async def analyze_message(content: str, context: str = "", image_b64: str = "") -> dict:
+    """Analyze a message for scam indicators using Gemma 4.
 
-    messages = [{"role": "user", "content": user_prompt}]
+    Supports text-only or multimodal (text + image) analysis.
+    """
+    if image_b64:
+        # Multimodal: analyze screenshot/photo with Gemma 4 vision
+        user_prompt = "Analyze this image for scam or fraud indicators. Extract any text visible in the image and evaluate it for signs of fraud, phishing, or manipulation."
+        if content:
+            user_prompt += f"\n\nThe user also provided this text context:\n---\n{content}\n---"
+        if context:
+            user_prompt += f"\n\nAdditional context: {context}"
+        messages = [{"role": "user", "content": user_prompt, "images": [image_b64]}]
+    else:
+        user_prompt = f"Analyze the following message for scam or fraud indicators:\n\n---\n{content}\n---"
+        if context:
+            user_prompt += f"\n\nAdditional context from the user: {context}"
+        messages = [{"role": "user", "content": user_prompt}]
 
     # Try function calling first
     try:

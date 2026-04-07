@@ -1,125 +1,175 @@
 # Beacon -- Video Script (3 minutes)
 
-## Scene 1: The Problem (0:00 - 0:35)
-**[Dark screen, soft piano]**
+**IMPORTANT:** Based on analysis of past Gemma hackathon winners, the video is
+the #1 factor judges evaluate. Every winner told a personal story, showed real
+users, and demonstrated offline/on-device capability prominently.
 
-NARRATOR (Corey, voiceover):
-"My grandmother lost three thousand dollars to a phone scam. Someone called pretending to be from the IRS, told her she'd be arrested if she didn't pay. She was terrified. She drove to Walgreens, bought gift cards, and read them the numbers."
+---
 
-**[Cut to statistics appearing on screen, one at a time]**
+## Scene 1: The Problem (0:00 - 0:30)
+**[Corey speaking directly to camera, casual setting, warm lighting]**
+
+"My grandmother lost three thousand dollars to a phone scam. Someone called
+pretending to be from the IRS, told her she'd be arrested if she didn't pay.
+She was terrified. She drove to Walgreens, bought gift cards, and read them
+the numbers over the phone."
+
+**[Cut to statistics, clean white text on dark background, appearing one at a time]**
 
 "She's not alone."
 
-- $10 billion in reported fraud losses in 2023 -- and only 5% gets reported
+- $10 billion in reported fraud losses in 2023
+- Only 5% of fraud even gets reported
 - Seniors lose an average of $33,915 per scam
-- The only AI scam checker, Norton Genie, was shut down in 2024
-- Scammers have AI now. Their victims don't.
+- The only AI scam checker -- Norton Genie -- was shut down in 2024
 
-"The people who need protection the most are the least likely to have it. And the only tool that tried to help was killed off."
+**[Beat]**
+
+"Scammers have AI now. Their victims don't."
 
 ---
 
-## Scene 2: Introducing Beacon (0:35 - 1:00)
-**[Beacon logo appears. Bright, hopeful music begins.]**
+## Scene 2: Introducing Beacon (0:30 - 0:55)
+**[Beacon logo animates in. Music shifts to hopeful.]**
+**[Corey, to camera]**
 
-"This is Beacon. Free. Private. And it runs entirely on your device."
+"So I built Beacon. It's free. It's open source. And it runs entirely on your
+device -- powered by Google's Gemma 4 AI through Ollama."
 
-**[Screen recording: Beacon landing page, scrolling through features]**
-
-"Beacon uses Google's Gemma 4 -- running locally through Ollama -- to give everyone access to the kind of protection that used to require a lawyer, a security expert, or a tech-savvy friend."
+**[Quick montage: landing page scrolling, app switching between tabs]**
 
 "No cloud. No subscriptions. No data ever leaves your computer."
 
----
+**[KEY MOMENT: Corey visibly toggles airplane mode ON on his laptop]**
 
-## Scene 3: Live Demo - Scam Scanner (1:00 - 1:45)
-**[Screen recording of app]**
+"Watch this. I just turned on airplane mode. No internet at all."
 
-"Let me show you. Here's an actual phishing email I received last week."
+**[Camera shows airplane mode icon in taskbar]**
 
-**[Paste email into Scam Scanner, click Analyze]**
-
-"In seconds, Beacon gives me a trust score of 5 out of 100 -- Dangerous."
-
-**[Zoom into results]**
-
-"It identified this as a phishing attack, found four red flags -- the fake urgency, the suspicious URL, the threat of account closure, and the generic greeting. And look at this explanation."
-
-**[Highlight explanation text]**
-
-"Written in plain English that anyone can understand. My grandmother could read this and know exactly what's happening."
-
-"It even tells you what to do instead -- call the real bank directly."
+"Beacon still works. Because the AI runs right here, on my machine."
 
 ---
 
-## Scene 4: Live Demo - Contract Reader (1:45 - 2:15)
+## Scene 3: Live Demo - Scam Scanner (0:55 - 1:40)
+**[Screen recording, Corey narrating]**
+
+"Let me show you. Here's an actual phishing email I got last week."
+
+**[Paste email into Scam Scanner. Instant pre-screen flags appear within 1 second.]**
+
+"Immediately -- before the AI even finishes thinking -- Beacon's rule-based
+pre-screener catches three red flags. Urgency pressure, authority
+impersonation, and a suspicious URL."
+
+**[Full Gemma 4 results appear with trust score animation]**
+
+"And here's the full AI analysis. Trust score: 5 out of 100. Dangerous."
+
+"It found five red flags, classified this as a phishing attack, and -- this
+is the part I built for my grandmother --"
+
+**[Zoom into the explanation text]**
+
+"It explains the danger in plain English. Not technical jargon. Not a scary
+warning. Just a clear, warm explanation of why this is dangerous and what
+to do instead."
+
+---
+
+## Scene 4: Live Demo - Contract Reader (1:40 - 2:10)
 **[Screen recording]**
 
-"But Beacon does more than catch scams. Here's a real lease agreement with some concerning clauses."
+"But Beacon does more than catch scams. Here's a lease agreement with some
+concerning clauses."
 
-**[Paste contract, click Analyze]**
+**[Paste contract, results appear]**
 
-"Beacon flags the predatory terms in red -- this landlord is trying to charge for normal wear and tear, which is illegal in most states. It flags the mandatory arbitration clause, the automatic renewal trap, and estimates hidden costs."
+"Beacon flags the predatory terms -- this landlord is trying to charge for
+normal wear and tear, which is illegal in most states. The mandatory
+arbitration clause. Hidden fees. And it gives you the exact questions to
+ask before signing."
 
-**[Scroll through results]**
-
-"It even gives you the specific questions to ask before signing. This is the kind of analysis that would cost hundreds of dollars from a lawyer."
+"This is the kind of analysis that costs hundreds of dollars from a lawyer.
+Beacon does it for free, on your laptop, in seconds."
 
 ---
 
-## Scene 5: Technical Architecture (2:15 - 2:35)
-**[Architecture diagram on screen]**
+## Scene 5: Technical Architecture + Screenshot Scanning (2:10 - 2:35)
+**[Architecture diagram: Pre-screener -> Gemma 4 -> Structured Output]**
 
-"Under the hood, Beacon uses Gemma 4's native function calling to produce structured analysis -- trust scores, risk classifications, and red flag arrays -- not just free text."
+"Under the hood, Beacon uses a two-stage pipeline. First, a lightweight
+rule-based pre-screener gives instant feedback. Then Gemma 4's native
+function calling produces structured analysis -- trust scores, risk
+classifications, and red flag arrays."
 
-"The E4B model runs on a regular laptop. We also fine-tuned a specialized scam detection model using Unsloth that achieves higher accuracy with the same hardware requirements."
+**[Quick demo: user uploads a screenshot of a suspicious text message]**
 
-"Everything is open source. Every line of code is auditable."
+"And because Gemma 4 is multimodal, you can scan screenshots too. Take a
+photo of a suspicious text, upload it, and Beacon reads and analyzes it."
+
+"We also fine-tuned a specialized scam detection model using Unsloth."
 
 ---
 
 ## Scene 6: Vision and Close (2:35 - 3:00)
-**[Back to Corey, speaking to camera]**
+**[Corey, speaking to camera, genuine and direct]**
 
-"Beacon exists because I believe everyone deserves protection -- not just those who can afford it."
+"I built Beacon because I believe everyone deserves protection. Not just
+people who can afford cybersecurity software. Not just people who understand
+technology. Everyone."
 
-"With Gemma 4 running locally, we can put frontier AI directly in the hands of the people who need it most. No gatekeepers. No subscriptions. No compromises on privacy."
+"With Gemma 4 running locally, we can put frontier AI directly in the hands
+of the people who need it most. No gatekeepers. No subscriptions. No
+compromises on privacy."
 
-"The AI revolution shouldn't just help the people who are already doing fine. It should protect the people who are falling behind."
+**[Beat]**
 
-**[Beacon logo + tagline]**
+"The AI revolution should protect the people who are falling behind. Not
+just help the people who are already doing fine."
+
+**[Beacon logo + tagline appear]**
 
 "Beacon. Your AI guardian. Completely private. Always free."
 
-**[GitHub link + QR code]**
+**[GitHub URL + QR code fade in]**
 
 ---
 
 ## Production Notes
 
-### Equipment Needed
-- Screen recording software (OBS)
-- Camera for talking-head shots (iPhone is fine)
-- Microphone (even a good headset works)
-- Background music (royalty-free, subtle)
+### Critical Success Factors (from past winners analysis)
+1. **Personal story is the hook** -- Corey's grandmother story is authentic and powerful. Lead with it.
+2. **Show airplane mode** -- Past winners visibly demonstrated offline capability. This is a key moment.
+3. **Two-stage pipeline demo** -- Show the instant pre-screen, then the AI analysis. This demonstrates engineering depth.
+4. **Plain-language explanation** -- Zoom into the explanation text. This is the emotional payoff.
+5. **Keep it authentic** -- iPhone camera is fine. Natural lighting. Don't over-produce. Past winners used simple setups.
+6. **No slides** -- Show the actual app running on a real device. No PowerPoints.
 
-### Key Shots
-1. Corey speaking to camera (personal story)
-2. Statistics on screen (motion graphics or clean text)
-3. Screen recording of live demo (Scam Scanner)
-4. Screen recording of live demo (Contract Reader)
-5. Architecture diagram (clean, simple)
-6. Closing with logo and links
+### Equipment
+- Screen recording: OBS Studio (free)
+- Camera: iPhone or webcam (simple, authentic)
+- Microphone: Any decent headset mic or Airpods
+- Background music: royalty-free from YouTube Audio Library
+- Editing: CapCut, DaVinci Resolve (free), or iMovie
 
-### Tone
-- Personal and authentic (Corey's real story)
-- Confident but not arrogant
-- Warm and empathetic toward vulnerable populations
-- Technical credibility without jargon
+### Shot List
+1. Corey to camera -- grandmother story (0:00-0:30)
+2. Statistics on dark background (0:15-0:25)
+3. Airplane mode toggle (0:45-0:55) -- KEY MOMENT
+4. Screen recording: Scam Scanner with pre-screen + full analysis (0:55-1:40)
+5. Screen recording: Contract Reader (1:40-2:10)
+6. Architecture diagram (2:10-2:20)
+7. Screenshot scanning demo (2:20-2:30)
+8. Corey to camera -- closing message (2:35-3:00)
+9. Logo + links (2:55-3:00)
 
 ### Music
-- Opening: Soft, slightly somber piano
-- After "Introducing Beacon": Uplifting, optimistic
-- Demo sections: Subtle background, not distracting
-- Closing: Inspiring, builds to resolution
+- 0:00-0:30: Soft, slightly somber piano (the problem)
+- 0:30-3:00: Uplifting, building to resolution (the solution)
+- Use a single continuous track if possible for cohesion
+
+### Pacing
+- Never stay on one shot for more than 10-15 seconds
+- Cut between Corey and screen recordings frequently
+- Statistics should animate in one at a time (not all at once)
+- The airplane mode moment should have a brief pause for emphasis

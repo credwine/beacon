@@ -25,6 +25,31 @@ function switchTab(tab) {
     document.getElementById(`panel-${tab}`).classList.add('active');
 }
 
+// ---- Image Upload (Multimodal) ----
+
+let scanImageB64 = '';
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        // Extract base64 portion (remove data:image/...;base64, prefix)
+        scanImageB64 = dataUrl.split(',')[1];
+        document.getElementById('previewImg').src = dataUrl;
+        document.getElementById('imagePreview').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearImage() {
+    scanImageB64 = '';
+    document.getElementById('scanImage').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
+}
+
 // ---- Health Check ----
 
 async function checkHealth() {
@@ -85,6 +110,7 @@ function loadScanExample() {
 function clearScan() {
     document.getElementById('scanInput').value = '';
     document.getElementById('scanContext').value = '';
+    clearImage();
     document.getElementById('scanResult').innerHTML = `
         <div class="result-placeholder">
             <i data-lucide="shield"></i>
@@ -96,24 +122,68 @@ function clearScan() {
 
 async function runScan() {
     const content = document.getElementById('scanInput').value.trim();
-    if (!content) return;
+    if (!content && !scanImageB64) return;
 
     const btn = document.getElementById('scanBtn');
     const resultDiv = document.getElementById('scanResult');
 
     btn.disabled = true;
-    resultDiv.innerHTML = `
-        <div class="loading-pulse">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Analyzing message with Gemma 4...</div>
-        </div>`;
 
+    // Stage 1: Instant pre-screening (rule-based, <1ms)
+    if (content && !scanImageB64) {
+        try {
+            const preRes = await fetch('/api/scan/prescreen', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            if (preRes.ok) {
+                const preData = await preRes.json();
+                if (preData.flag_count > 0) {
+                    resultDiv.innerHTML = `
+                        <div style="margin-bottom:1rem;">
+                            <div class="result-section-title">Instant Pre-Scan (${preData.flag_count} flags found)</div>
+                            ${preData.instant_flags.map(f => `
+                                <div class="red-flag-item" style="margin-bottom:0.25rem;">
+                                    <svg class="red-flag-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                    ${f}
+                                </div>
+                            `).join('')}
+                            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">Preliminary score: ${preData.preliminary_score}/100</div>
+                        </div>
+                        <div class="loading-pulse">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">Running deep analysis with Gemma 4...</div>
+                        </div>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="loading-pulse">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">No instant red flags. Running deep analysis with Gemma 4...</div>
+                        </div>`;
+                }
+            }
+        } catch { /* pre-screen is best-effort */ }
+    } else {
+        const analyzeMode = scanImageB64 ? 'Analyzing screenshot with Gemma 4 vision...' : 'Analyzing message with Gemma 4...';
+        resultDiv.innerHTML = `
+            <div class="loading-pulse">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">${analyzeMode}</div>
+            </div>`;
+    }
+
+    // Stage 2: Full Gemma 4 LLM analysis
     try {
         const res = await fetch('/api/scan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 content,
+                image: scanImageB64,
                 context: document.getElementById('scanContext').value.trim()
             })
         });

@@ -21,7 +21,7 @@ from transformers import TrainingArguments
 
 # ---- Configuration ----
 
-MODEL_NAME = "google/gemma-4-4b"  # Base model (smaller variant for fine-tuning)
+MODEL_NAME = "google/gemma-4-E4B"  # Base model (4.5B active params, fine-tunable on consumer GPU)
 MAX_SEQ_LENGTH = 2048
 LORA_R = 16
 LORA_ALPHA = 16

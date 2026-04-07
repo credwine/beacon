@@ -110,11 +110,12 @@ The fine-tuned model and training data are available in `training/`.
 
 ## Model Variants
 
-| Model | Size | VRAM | Best For |
-|-------|------|------|----------|
-| `gemma4:e2b` | ~1.5GB | 4GB | Mobile/embedded |
-| `gemma4:e4b` | ~3GB | 6GB | Laptops (recommended) |
-| `gemma4:26b` | ~16GB | 16GB+ | Desktop with GPU |
+| Model | Download | VRAM (Q4) | Active Params | Best For |
+|-------|----------|-----------|---------------|----------|
+| `gemma4:e2b` | 7.2 GB | 4 GB | 2.3B | Mobile, embedded, low-end laptops |
+| `gemma4:e4b` | 9.6 GB | 6 GB | 4.5B | Laptops (recommended) |
+| `gemma4:26b` | 18 GB | 18 GB | 3.8B (MoE) | Desktop with GPU, best quality/speed ratio |
+| `gemma4:31b` | 20 GB | 20 GB | 30.7B | High-end GPU, maximum quality |
 
 Configure via environment variable:
 ```bash

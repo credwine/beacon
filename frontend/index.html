@@ -317,10 +317,17 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                         ></textarea>
                         <div class="image-upload" id="imageUploadArea">
                             <input type="file" id="scanImage" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-                            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('scanImage').click()" style="margin-top:0.5rem;">
-                                <i data-lucide="camera"></i>
-                                Upload Screenshot (multimodal)
-                            </button>
+                            <input type="file" id="scanCamera" accept="image/*" capture="environment" style="display:none" onchange="handleImageUpload(event)">
+                            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">
+                                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('scanCamera').click()">
+                                    <i data-lucide="camera"></i>
+                                    Take Photo
+                                </button>
+                                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('scanImage').click()">
+                                    <i data-lucide="upload"></i>
+                                    Upload Image
+                                </button>
+                            </div>
                             <div id="imagePreview" style="display:none;margin-top:0.5rem;">
                                 <img id="previewImg" style="max-height:80px;border-radius:6px;border:1px solid var(--border);">
                                 <button class="btn btn-ghost btn-sm" onclick="clearImage()" style="margin-left:0.5rem;">Remove</button>
@@ -381,6 +388,25 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                             <option value="tos">Terms of Service</option>
                             <option value="other">Other</option>
                         </select>
+                        <div class="file-upload" style="margin-top:0.5rem;">
+                            <input type="file" id="contractFile" accept=".txt,.pdf,.doc,.docx,.rtf" style="display:none" onchange="handleContractFile(event)">
+                            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('contractFile').click()">
+                                    <i data-lucide="upload"></i>
+                                    Upload File
+                                </button>
+                                <input type="file" id="contractCamera" accept="image/*" capture="environment" style="display:none" onchange="handleContractPhoto(event)">
+                                <button class="btn btn-ghost btn-sm" onclick="document.getElementById('contractCamera').click()">
+                                    <i data-lucide="camera"></i>
+                                    Take Photo
+                                </button>
+                                <span id="contractFileName" style="font-size:0.8rem;color:var(--text-muted);"></span>
+                            </div>
+                            <div id="contractImagePreview" style="display:none;margin-top:0.5rem;">
+                                <img id="contractPreviewImg" style="max-height:80px;border-radius:6px;border:1px solid var(--border);">
+                                <button class="btn btn-ghost btn-sm" onclick="clearContractImage()" style="margin-left:0.5rem;">Remove</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="input-actions">
                         <button class="btn btn-primary" onclick="runContract()" id="contractBtn">

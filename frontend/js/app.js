@@ -792,9 +792,52 @@ function loadContractExample() {
     document.getElementById('contractType').value = 'lease';
 }
 
+async function handleContractFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const nameEl = document.getElementById('contractFileName');
+    nameEl.textContent = file.name;
+
+    if (file.name.endsWith('.txt') || file.name.endsWith('.rtf')) {
+        document.getElementById('contractInput').value = await file.text();
+    } else if (file.name.endsWith('.pdf')) {
+        try {
+            if (!window.pdfjsLib) {
+                await new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
+                    s.type = 'module';
+                    s.onload = resolve;
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+                await new Promise(r => setTimeout(r, 1500));
+            }
+            if (window.pdfjsLib) {
+                const pdf = await window.pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                let text = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(item => item.str).join(' ') + '\n\n';
+                }
+                document.getElementById('contractInput').value = text.trim();
+            } else {
+                nameEl.textContent = file.name + ' -- PDF reader unavailable, paste text manually';
+            }
+        } catch (err) {
+            nameEl.textContent = file.name + ' -- could not read PDF, paste text manually';
+        }
+    } else {
+        nameEl.textContent = file.name + ' -- for Word docs, copy and paste the text instead';
+    }
+}
+
 function clearContract() {
     document.getElementById('contractInput').value = '';
     document.getElementById('contractType').value = '';
+    if (document.getElementById('contractFile')) document.getElementById('contractFile').value = '';
+    if (document.getElementById('contractFileName')) document.getElementById('contractFileName').textContent = '';
     document.getElementById('contractResult').innerHTML = `
         <div class="result-placeholder">
             <i data-lucide="file-search"></i>

@@ -46,6 +46,13 @@ node_modules/
 # Docker
 .docker/
 
+# Video assets (too large for git)
+video_assets/
+
+# Guard logs
+guard/logs/
+guard/alert_history.json
+
 # Local user data (contacts, alert history)
 data/
 

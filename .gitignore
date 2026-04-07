@@ -48,3 +48,6 @@ node_modules/
 
 # Local user data (contacts, alert history)
 data/
+
+# But keep training data
+!training/data/

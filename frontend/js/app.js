@@ -1103,6 +1103,278 @@ function renderRightsResult(data, container) {
     `;
 }
 
+// ---- Export / Print / Copy ----
+
+function _getLastResultData(type) {
+    const entries = beaconHistory.getAll();
+    return entries.find(e => e.type === type);
+}
+
+function exportResults(type) {
+    const entry = _getLastResultData(type);
+    if (!entry || !entry.result) return '';
+
+    const data = entry.result;
+    const timestamp = new Date(entry.timestamp).toLocaleString();
+    let typeLabel, body;
+
+    if (type === 'scan') {
+        typeLabel = 'Scam Scan';
+        const riskLabel = (data.risk_level || '').replace(/_/g, ' ');
+        body = `
+            <h2 style="margin:0 0 4px;">Trust Score: ${data.trust_score}/100</h2>
+            <p style="margin:0 0 16px;color:#666;text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">${riskLabel}</p>
+            ${data.scam_type && data.scam_type !== 'Unknown' ? `<p style="margin:0 0 16px;color:#555;">Scam Type: ${data.scam_type}</p>` : ''}
+            ${data.explanation ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">What This Means</h3><p style="margin:0 0 16px;line-height:1.7;">${data.explanation}</p>` : ''}
+            ${data.red_flags && data.red_flags.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Red Flags (${data.red_flags.length})</h3><ul style="margin:0 0 16px;padding-left:20px;">${data.red_flags.map(f => `<li style="margin-bottom:6px;color:#991b1b;">${f}</li>`).join('')}</ul>` : ''}
+            ${data.recommended_actions && data.recommended_actions.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Recommended Actions</h3><ul style="margin:0 0 16px;padding-left:20px;">${data.recommended_actions.map(a => `<li style="margin-bottom:6px;">${a}</li>`).join('')}</ul>` : ''}
+            ${data.safe_alternatives ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Safe Alternative</h3><p style="margin:0 0 16px;line-height:1.7;">${data.safe_alternatives}</p>` : ''}
+        `;
+    } else if (type === 'contract') {
+        typeLabel = 'Contract Analysis';
+        body = `
+            ${data.document_type ? `<p style="margin:0 0 16px;color:#666;text-transform:uppercase;font-weight:700;letter-spacing:0.05em;">${data.document_type}</p>` : ''}
+            ${data.summary ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Summary</h3><p style="margin:0 0 16px;line-height:1.7;">${data.summary}</p>` : ''}
+            ${data.flagged_items && data.flagged_items.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Flagged Concerns (${data.flagged_items.length})</h3>${data.flagged_items.map(item => {
+                const sev = (item.severity || 'INFO').toUpperCase();
+                return `<div style="margin-bottom:10px;padding:10px;border-left:4px solid ${sev === 'CRITICAL' ? '#ef4444' : sev === 'WARNING' ? '#f59e0b' : '#3b82f6'};background:${sev === 'CRITICAL' ? '#fef2f2' : sev === 'WARNING' ? '#fffbeb' : '#eff6ff'};"><strong style="font-size:12px;text-transform:uppercase;color:${sev === 'CRITICAL' ? '#ef4444' : sev === 'WARNING' ? '#f59e0b' : '#3b82f6'};">${sev}</strong>${item.clause ? `<div style="font-style:italic;color:#555;margin:4px 0;">"${item.clause}"</div>` : ''}<div>${item.concern || ''}</div>${item.typical_standard ? `<div style="font-size:13px;color:#888;margin-top:4px;">Fair standard: ${item.typical_standard}</div>` : ''}</div>`;
+            }).join('')}` : ''}
+            ${data.hidden_costs && data.hidden_costs.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Hidden Costs</h3>${data.hidden_costs.map(cost => `<div style="margin-bottom:10px;padding:10px;border-left:4px solid #f59e0b;background:#fffbeb;"><div>${cost.cost}</div>${cost.estimated_impact ? `<div style="font-size:13px;color:#f59e0b;font-weight:600;margin-top:4px;">Estimated impact: ${cost.estimated_impact}</div>` : ''}</div>`).join('')}` : ''}
+            ${data.key_terms && data.key_terms.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Key Terms</h3>${data.key_terms.map(term => `<div style="margin-bottom:10px;padding:10px;border:1px solid #e2e8f0;border-radius:6px;"><strong>${term.term}</strong><div style="color:#555;margin-top:4px;">${term.plain_english || ''}</div>${term.impact ? `<div style="font-size:13px;color:#888;margin-top:4px;">Impact: ${term.impact}</div>` : ''}</div>`).join('')}` : ''}
+            ${data.overall_assessment ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Overall Assessment</h3><p style="margin:0 0 16px;line-height:1.7;">${data.overall_assessment}</p>` : ''}
+            ${data.questions_to_ask && data.questions_to_ask.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Questions to Ask</h3><ul style="margin:0 0 16px;padding-left:20px;">${data.questions_to_ask.map(q => `<li style="margin-bottom:6px;">${q}</li>`).join('')}</ul>` : ''}
+        `;
+    } else if (type === 'rights') {
+        typeLabel = 'Rights Analysis';
+        body = `
+            ${data.situation_summary ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Your Situation</h3><p style="margin:0 0 16px;line-height:1.7;">${data.situation_summary}</p>` : ''}
+            ${data.applicable_rights && data.applicable_rights.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Your Rights</h3>${data.applicable_rights.map(right => `<div style="margin-bottom:10px;padding:10px;border:1px solid #e2e8f0;border-radius:6px;"><strong>${right.right}</strong><div style="color:#555;margin-top:4px;">${right.explanation}</div>${right.legal_basis ? `<div style="font-size:12px;color:#888;margin-top:4px;font-family:monospace;">${right.legal_basis}</div>` : ''}</div>`).join('')}` : ''}
+            ${data.immediate_actions && data.immediate_actions.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">What to Do Next</h3><ul style="margin:0 0 16px;padding-left:20px;">${data.immediate_actions.map(a => `<li style="margin-bottom:6px;"><strong>${a.action}</strong>${a.why ? ' -- ' + a.why : ''}</li>`).join('')}</ul>` : ''}
+            ${data.documentation_needed && data.documentation_needed.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Evidence to Gather</h3><ul style="margin:0 0 16px;padding-left:20px;">${data.documentation_needed.map(d => `<li style="margin-bottom:6px;">${d}</li>`).join('')}</ul>` : ''}
+            ${data.free_resources && data.free_resources.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Free Resources</h3>${data.free_resources.map(r => `<div style="margin-bottom:10px;padding:10px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:6px;"><strong style="color:#065f46;">${r.name}</strong><div style="color:#047857;font-size:14px;margin-top:4px;">${r.what_they_do}</div>${r.how_to_reach ? `<div style="font-size:12px;margin-top:4px;font-family:monospace;">${r.how_to_reach}</div>` : ''}</div>`).join('')}` : ''}
+            ${data.warnings && data.warnings.length > 0 ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Things to Avoid</h3><ul style="margin:0 0 16px;padding-left:20px;color:#991b1b;">${data.warnings.map(w => `<li style="margin-bottom:6px;">${w}</li>`).join('')}</ul>` : ''}
+            ${data.timeline ? `<h3 style="margin:20px 0 6px;font-size:14px;text-transform:uppercase;color:#888;">Important Deadlines</h3><p style="margin:0 0 16px;line-height:1.7;">${data.timeline}</p>` : ''}
+            <p style="font-size:13px;color:#888;font-style:italic;margin-top:20px;padding-top:12px;border-top:1px solid #e2e8f0;">This is educational information, not legal advice. For your specific situation, consider consulting with a legal professional.</p>
+        `;
+    } else {
+        return '';
+    }
+
+    return `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Beacon - ${typeLabel} Report</title>
+<style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:700px;margin:0 auto;padding:40px 24px;color:#0f172a;line-height:1.6;}h1{font-size:22px;margin:0;}h2{font-size:20px;}h3{font-size:14px;}@media print{body{padding:20px;}}</style>
+</head><body>
+<div style="margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #3b82f6;">
+    <h1 style="color:#3b82f6;margin:0;">Beacon</h1>
+    <p style="margin:4px 0 0;color:#888;font-size:14px;">Privacy-First AI Protection</p>
+</div>
+<div style="margin-bottom:24px;">
+    <p style="margin:0;font-size:18px;font-weight:700;">${typeLabel} Report</p>
+    <p style="margin:4px 0 0;color:#888;font-size:13px;">${timestamp}</p>
+</div>
+${body}
+<div style="margin-top:32px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:12px;color:#888;">
+    <p style="margin:0 0 4px;">Generated by Beacon -- Privacy-First AI Protection. Powered by Gemma 4. https://github.com/credwine/beacon</p>
+    <p style="margin:0;">This analysis was performed locally on your device. No data was transmitted.</p>
+</div>
+</body></html>`;
+}
+
+function printResults(type) {
+    const html = exportResults(type);
+    if (!html) return;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(html);
+    printWindow.document.close();
+
+    printWindow.onload = function () {
+        printWindow.focus();
+        printWindow.print();
+    };
+}
+
+function copyResults(type) {
+    const entry = _getLastResultData(type);
+    if (!entry || !entry.result) return;
+
+    const data = entry.result;
+    const timestamp = new Date(entry.timestamp).toLocaleString();
+    let lines = [];
+
+    lines.push('BEACON ANALYSIS REPORT');
+    lines.push('='.repeat(40));
+
+    if (type === 'scan') {
+        lines.push(`Type: Scam Scan`);
+        lines.push(`Date: ${timestamp}`);
+        lines.push('');
+        lines.push(`Trust Score: ${data.trust_score}/100`);
+        lines.push(`Risk Level: ${(data.risk_level || '').replace(/_/g, ' ')}`);
+        if (data.scam_type && data.scam_type !== 'Unknown') lines.push(`Scam Type: ${data.scam_type}`);
+        if (data.explanation) {
+            lines.push('');
+            lines.push('--- What This Means ---');
+            lines.push(data.explanation);
+        }
+        if (data.red_flags && data.red_flags.length > 0) {
+            lines.push('');
+            lines.push(`--- Red Flags (${data.red_flags.length}) ---`);
+            data.red_flags.forEach(f => lines.push(`  * ${f}`));
+        }
+        if (data.recommended_actions && data.recommended_actions.length > 0) {
+            lines.push('');
+            lines.push('--- Recommended Actions ---');
+            data.recommended_actions.forEach(a => lines.push(`  * ${a}`));
+        }
+        if (data.safe_alternatives) {
+            lines.push('');
+            lines.push('--- Safe Alternative ---');
+            lines.push(data.safe_alternatives);
+        }
+    } else if (type === 'contract') {
+        lines.push(`Type: Contract Analysis`);
+        lines.push(`Date: ${timestamp}`);
+        if (data.document_type) lines.push(`Document Type: ${data.document_type}`);
+        if (data.summary) {
+            lines.push('');
+            lines.push('--- Summary ---');
+            lines.push(data.summary);
+        }
+        if (data.flagged_items && data.flagged_items.length > 0) {
+            lines.push('');
+            lines.push(`--- Flagged Concerns (${data.flagged_items.length}) ---`);
+            data.flagged_items.forEach(item => {
+                const sev = (item.severity || 'INFO').toUpperCase();
+                lines.push(`  [${sev}] ${item.concern || ''}`);
+                if (item.clause) lines.push(`    Clause: "${item.clause}"`);
+                if (item.typical_standard) lines.push(`    Fair standard: ${item.typical_standard}`);
+            });
+        }
+        if (data.hidden_costs && data.hidden_costs.length > 0) {
+            lines.push('');
+            lines.push('--- Hidden Costs ---');
+            data.hidden_costs.forEach(cost => {
+                lines.push(`  * ${cost.cost}`);
+                if (cost.estimated_impact) lines.push(`    Estimated impact: ${cost.estimated_impact}`);
+            });
+        }
+        if (data.key_terms && data.key_terms.length > 0) {
+            lines.push('');
+            lines.push('--- Key Terms ---');
+            data.key_terms.forEach(term => {
+                lines.push(`  ${term.term}: ${term.plain_english || ''}`);
+                if (term.impact) lines.push(`    Impact: ${term.impact}`);
+            });
+        }
+        if (data.overall_assessment) {
+            lines.push('');
+            lines.push('--- Overall Assessment ---');
+            lines.push(data.overall_assessment);
+        }
+        if (data.questions_to_ask && data.questions_to_ask.length > 0) {
+            lines.push('');
+            lines.push('--- Questions to Ask ---');
+            data.questions_to_ask.forEach(q => lines.push(`  * ${q}`));
+        }
+    } else if (type === 'rights') {
+        lines.push(`Type: Rights Analysis`);
+        lines.push(`Date: ${timestamp}`);
+        if (data.situation_summary) {
+            lines.push('');
+            lines.push('--- Your Situation ---');
+            lines.push(data.situation_summary);
+        }
+        if (data.applicable_rights && data.applicable_rights.length > 0) {
+            lines.push('');
+            lines.push('--- Your Rights ---');
+            data.applicable_rights.forEach(right => {
+                lines.push(`  * ${right.right}`);
+                lines.push(`    ${right.explanation}`);
+                if (right.legal_basis) lines.push(`    Legal basis: ${right.legal_basis}`);
+            });
+        }
+        if (data.immediate_actions && data.immediate_actions.length > 0) {
+            lines.push('');
+            lines.push('--- What to Do Next ---');
+            data.immediate_actions.forEach(a => {
+                lines.push(`  * ${a.action}${a.why ? ' -- ' + a.why : ''}`);
+            });
+        }
+        if (data.documentation_needed && data.documentation_needed.length > 0) {
+            lines.push('');
+            lines.push('--- Evidence to Gather ---');
+            data.documentation_needed.forEach(d => lines.push(`  * ${d}`));
+        }
+        if (data.free_resources && data.free_resources.length > 0) {
+            lines.push('');
+            lines.push('--- Free Resources ---');
+            data.free_resources.forEach(r => {
+                lines.push(`  * ${r.name}: ${r.what_they_do}`);
+                if (r.how_to_reach) lines.push(`    Contact: ${r.how_to_reach}`);
+            });
+        }
+        if (data.warnings && data.warnings.length > 0) {
+            lines.push('');
+            lines.push('--- Things to Avoid ---');
+            data.warnings.forEach(w => lines.push(`  * ${w}`));
+        }
+        if (data.timeline) {
+            lines.push('');
+            lines.push('--- Important Deadlines ---');
+            lines.push(data.timeline);
+        }
+        lines.push('');
+        lines.push('Note: This is educational information, not legal advice.');
+    }
+
+    lines.push('');
+    lines.push('-'.repeat(40));
+    lines.push('Generated by Beacon -- Privacy-First AI Protection.');
+    lines.push('Powered by Gemma 4. https://github.com/credwine/beacon');
+    lines.push('This analysis was performed locally on your device. No data was transmitted.');
+
+    const text = lines.join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+        showCopyToast();
+    }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showCopyToast();
+    });
+}
+
+function showCopyToast() {
+    let toast = document.getElementById('copyToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'copyToast';
+        toast.className = 'copy-toast';
+        toast.innerHTML = '<div class="copy-toast-content"><i data-lucide="check"></i> <span>Copied to clipboard</span></div>';
+        document.body.appendChild(toast);
+    }
+    toast.style.display = 'block';
+    toast.style.animation = 'toastSlideIn 0.3s ease-out';
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
+    }, 2000);
+}
+
 // ---- Trusted Contacts & Alerts ----
 
 const RELATIONSHIP_LABELS = {

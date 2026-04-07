@@ -31,6 +31,18 @@ app.include_router(streaming.router)
 app.include_router(alerts.router)
 
 
+@app.get("/manifest.json")
+async def serve_manifest():
+    """Serve PWA manifest from root path."""
+    return FileResponse(FRONTEND_DIR / "manifest.json", media_type="application/manifest+json")
+
+
+@app.get("/sw.js")
+async def serve_sw():
+    """Serve service worker from root path (required for proper scope)."""
+    return FileResponse(FRONTEND_DIR / "sw.js", media_type="application/javascript")
+
+
 @app.get("/")
 async def serve_index():
     """Serve the main application page."""

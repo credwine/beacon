@@ -11,6 +11,14 @@
     <meta property="og:description" content="Free, private scam detection powered by Gemma 4. Runs entirely on your device.">
     <meta property="og:type" content="website">
 
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Beacon">
+    <link rel="apple-touch-icon" href="/assets/icon-192.svg">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,8 +30,11 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+    <!-- Skip Navigation Link (Accessibility) -->
+    <a href="#main-content" class="sr-only" id="skipLink" style="position:absolute;top:-40px;left:0;background:var(--beacon-primary);color:white;padding:8px 16px;z-index:9999;transition:top 0.2s;" onfocus="this.style.top='0'" onblur="this.style.top='-40px'">Skip to main content</a>
+
     <!-- Landing Section -->
-    <section id="landing" class="landing">
+    <section id="landing" class="landing" role="main" aria-label="Beacon landing page">
         <nav class="nav">
             <div class="nav-brand">
                 <div class="beacon-icon">
@@ -195,7 +206,7 @@
     </section>
 
     <!-- Application Section (hidden by default) -->
-    <section id="app" class="app-section" style="display:none;">
+    <section id="app" class="app-section" style="display:none;" role="application" aria-label="Beacon application">
         <nav class="app-nav">
             <div class="app-nav-left">
                 <button class="btn btn-ghost btn-sm" onclick="showLanding()">
@@ -209,21 +220,24 @@
                     </svg>
                 </div>
                 <span class="app-nav-title">Beacon</span>
+                <button class="btn btn-ghost btn-sm history-toggle-btn" onclick="toggleHistoryDrawer()" title="Analysis History">
+                    <i data-lucide="clock"></i>
+                </button>
             </div>
-            <div class="app-tabs">
-                <button class="tab active" data-tab="scanner" onclick="switchTab('scanner')">
+            <div class="app-tabs" role="tablist" aria-label="Beacon tools">
+                <button class="tab active" data-tab="scanner" onclick="switchTab('scanner')" role="tab" aria-selected="true" aria-controls="panel-scanner" title="Alt+1">
                     <i data-lucide="scan-eye"></i>
                     <span>Scam Scanner</span>
                 </button>
-                <button class="tab" data-tab="contracts" onclick="switchTab('contracts')">
+                <button class="tab" data-tab="contracts" onclick="switchTab('contracts')" role="tab" aria-selected="false" aria-controls="panel-contracts" title="Alt+2">
                     <i data-lucide="file-search"></i>
                     <span>Contract Reader</span>
                 </button>
-                <button class="tab" data-tab="rights" onclick="switchTab('rights')">
+                <button class="tab" data-tab="rights" onclick="switchTab('rights')" role="tab" aria-selected="false" aria-controls="panel-rights" title="Alt+3">
                     <i data-lucide="scale"></i>
                     <span>Rights Navigator</span>
                 </button>
-                <button class="tab" data-tab="settings" onclick="switchTab('settings')">
+                <button class="tab" data-tab="settings" onclick="switchTab('settings')" role="tab" aria-selected="false" aria-controls="panel-settings" title="Alt+4">
                     <i data-lucide="settings"></i>
                     <span>Settings</span>
                 </button>
@@ -249,7 +263,7 @@
         </nav>
 
         <!-- Scanner Panel -->
-        <div id="panel-scanner" class="panel active">
+        <div id="panel-scanner" class="panel active" role="tabpanel" aria-labelledby="tab-scanner">
             <div class="panel-layout">
                 <div class="input-side">
                     <div class="input-header">
@@ -298,7 +312,7 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                         </button>
                     </div>
                 </div>
-                <div class="result-side" id="scanResult">
+                <div class="result-side" id="scanResult" aria-live="polite" aria-label="Scan results">
                     <div class="result-placeholder">
                         <i data-lucide="shield"></i>
                         <h3>Results will appear here</h3>
@@ -309,7 +323,7 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
         </div>
 
         <!-- Contracts Panel -->
-        <div id="panel-contracts" class="panel">
+        <div id="panel-contracts" class="panel" role="tabpanel" aria-labelledby="tab-contracts">
             <div class="panel-layout">
                 <div class="input-side">
                     <div class="input-header">
@@ -349,7 +363,7 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
                         </button>
                     </div>
                 </div>
-                <div class="result-side" id="contractResult">
+                <div class="result-side" id="contractResult" aria-live="polite" aria-label="Contract analysis results">
                     <div class="result-placeholder">
                         <i data-lucide="file-search"></i>
                         <h3>Results will appear here</h3>
@@ -360,7 +374,7 @@ Example: 'Dear valued customer, your account has been compromised. Click here im
         </div>
 
         <!-- Rights Panel -->
-        <div id="panel-rights" class="panel">
+        <div id="panel-rights" class="panel" role="tabpanel" aria-labelledby="tab-rights">
             <div class="panel-layout">
                 <div class="input-side">
                     <div class="input-header">
@@ -401,7 +415,7 @@ Example: 'My landlord is refusing to return my security deposit. I lived in the 
                         </button>
                     </div>
                 </div>
-                <div class="result-side" id="rightsResult">
+                <div class="result-side" id="rightsResult" aria-live="polite" aria-label="Rights analysis results">
                     <div class="result-placeholder">
                         <i data-lucide="scale"></i>
                         <h3>Results will appear here</h3>
@@ -412,7 +426,7 @@ Example: 'My landlord is refusing to return my security deposit. I lived in the 
         </div>
 
         <!-- Settings Panel -->
-        <div id="panel-settings" class="panel">
+        <div id="panel-settings" class="panel" role="tabpanel" aria-labelledby="tab-settings">
             <div class="settings-layout">
                 <div class="settings-main">
                     <div class="settings-header">
@@ -492,6 +506,35 @@ Example: 'My landlord is refusing to return my security deposit. I lived in the 
         </div>
     </section>
 
+    <!-- History Drawer -->
+    <div id="historyOverlay" class="history-overlay" onclick="toggleHistoryDrawer()"></div>
+    <aside id="historyDrawer" class="history-drawer">
+        <div class="history-drawer-header">
+            <h3>Analysis History</h3>
+            <button class="btn btn-ghost btn-sm" onclick="toggleHistoryDrawer()">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="history-drawer-filters">
+            <button class="history-filter active" data-filter="all" onclick="filterHistory('all')">All</button>
+            <button class="history-filter" data-filter="scan" onclick="filterHistory('scan')">Scans</button>
+            <button class="history-filter" data-filter="contract" onclick="filterHistory('contract')">Contracts</button>
+            <button class="history-filter" data-filter="rights" onclick="filterHistory('rights')">Rights</button>
+        </div>
+        <div id="historyList" class="history-drawer-list">
+            <div class="history-empty">
+                <i data-lucide="clock"></i>
+                <p>No history yet. Run an analysis to see it here.</p>
+            </div>
+        </div>
+        <div class="history-drawer-footer">
+            <button class="btn btn-ghost btn-sm" onclick="clearAllHistory()" id="clearHistoryBtn" style="display:none;">
+                <i data-lucide="trash-2"></i>
+                Clear History
+            </button>
+        </div>
+    </aside>
+
     <!-- Alert Toast Notification -->
     <div id="alertToast" class="alert-toast" style="display:none;">
         <div class="alert-toast-content">
@@ -500,6 +543,20 @@ Example: 'My landlord is refusing to return my security deposit. I lived in the 
         </div>
     </div>
 
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                    .then((reg) => {
+                        console.log('[Beacon] Service worker registered, scope:', reg.scope);
+                    })
+                    .catch((err) => {
+                        console.warn('[Beacon] Service worker registration failed:', err);
+                    });
+            });
+        }
+    </script>
     <script src="/js/app.js"></script>
 </body>
 </html>

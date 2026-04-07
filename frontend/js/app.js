@@ -203,6 +203,213 @@ function applyLanguageToUI() {
     lucide.createIcons();
 }
 
+// ---- History System (localStorage) ----
+
+const beaconHistory = {
+    _key: 'beacon_history',
+    _maxEntries: 50,
+
+    _read() {
+        try {
+            const raw = localStorage.getItem(this._key);
+            return raw ? JSON.parse(raw) : [];
+        } catch {
+            return [];
+        }
+    },
+
+    _write(entries) {
+        try {
+            localStorage.setItem(this._key, JSON.stringify(entries));
+        } catch { /* quota exceeded -- silently fail */ }
+    },
+
+    save(type, input, result) {
+        const entries = this._read();
+        const entry = {
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            type,
+            input,
+            result,
+            timestamp: new Date().toISOString()
+        };
+        entries.unshift(entry);
+        if (entries.length > this._maxEntries) {
+            entries.length = this._maxEntries;
+        }
+        this._write(entries);
+        renderHistoryDrawer();
+        return entry;
+    },
+
+    getAll() {
+        return this._read();
+    },
+
+    getByType(type) {
+        return this._read().filter(e => e.type === type);
+    },
+
+    clear() {
+        this._write([]);
+        renderHistoryDrawer();
+    },
+
+    delete(id) {
+        const entries = this._read().filter(e => e.id !== id);
+        this._write(entries);
+        renderHistoryDrawer();
+    }
+};
+
+// History drawer state
+let historyFilterType = 'all';
+
+function toggleHistoryDrawer() {
+    const drawer = document.getElementById('historyDrawer');
+    const overlay = document.getElementById('historyOverlay');
+    const isOpen = drawer.classList.contains('open');
+    if (isOpen) {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+    } else {
+        renderHistoryDrawer();
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+    }
+}
+
+function filterHistory(type) {
+    historyFilterType = type;
+    document.querySelectorAll('.history-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === type);
+    });
+    renderHistoryDrawer();
+}
+
+function clearAllHistory() {
+    if (!confirm('Clear all analysis history? This cannot be undone.')) return;
+    beaconHistory.clear();
+}
+
+function deleteHistoryEntry(id) {
+    beaconHistory.delete(id);
+}
+
+function timeAgo(dateStr) {
+    const now = Date.now();
+    const then = new Date(dateStr).getTime();
+    const diff = now - then;
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return 'just now';
+    if (minutes < 60) return minutes + ' min ago';
+    if (hours < 24) return hours + 'h ago';
+    if (days === 1) return 'yesterday';
+    if (days < 7) return days + 'd ago';
+    return new Date(dateStr).toLocaleDateString();
+}
+
+function getTypeIcon(type) {
+    if (type === 'scan') return 'scan-eye';
+    if (type === 'contract') return 'file-search';
+    if (type === 'rights') return 'scale';
+    return 'clock';
+}
+
+function getTypeLabel(type) {
+    if (type === 'scan') return 'Scam Scan';
+    if (type === 'contract') return 'Contract';
+    if (type === 'rights') return 'Rights';
+    return type;
+}
+
+function getTrustScoreBadge(entry) {
+    if (entry.type !== 'scan' || !entry.result || entry.result.trust_score === undefined) return '';
+    const score = entry.result.trust_score;
+    let cls;
+    if (score <= 20) cls = 'history-score-dangerous';
+    else if (score <= 40) cls = 'history-score-high-risk';
+    else if (score <= 60) cls = 'history-score-suspicious';
+    else if (score <= 80) cls = 'history-score-uncertain';
+    else cls = 'history-score-safe';
+    return `<span class="history-score-badge ${cls}">${score}/100</span>`;
+}
+
+function renderHistoryDrawer() {
+    const container = document.getElementById('historyList');
+    const clearBtn = document.getElementById('clearHistoryBtn');
+    if (!container) return;
+    let entries = historyFilterType === 'all'
+        ? beaconHistory.getAll()
+        : beaconHistory.getByType(historyFilterType);
+
+    if (entries.length === 0) {
+        container.innerHTML = `
+            <div class="history-empty">
+                <i data-lucide="clock"></i>
+                <p>No history yet. Run an analysis to see it here.</p>
+            </div>`;
+        if (clearBtn) clearBtn.style.display = 'none';
+        lucide.createIcons();
+        return;
+    }
+
+    if (clearBtn) clearBtn.style.display = '';
+
+    container.innerHTML = entries.map(entry => {
+        const preview = (entry.input || '').slice(0, 60) + ((entry.input || '').length > 60 ? '...' : '');
+        return `
+            <div class="history-entry" onclick="loadHistoryEntry('${entry.id}')">
+                <div class="history-entry-top">
+                    <div class="history-entry-icon">
+                        <i data-lucide="${getTypeIcon(entry.type)}"></i>
+                    </div>
+                    <div class="history-entry-meta">
+                        <span class="history-entry-type">${getTypeLabel(entry.type)}</span>
+                        <span class="history-entry-time">${timeAgo(entry.timestamp)}</span>
+                    </div>
+                    <button class="history-entry-delete" onclick="event.stopPropagation(); deleteHistoryEntry('${entry.id}')" title="Delete entry">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="history-entry-preview">${preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                ${getTrustScoreBadge(entry)}
+            </div>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+function loadHistoryEntry(id) {
+    const entries = beaconHistory.getAll();
+    const entry = entries.find(e => e.id === id);
+    if (!entry) return;
+
+    // Close the drawer
+    toggleHistoryDrawer();
+
+    // Switch to the correct tab
+    const tabMap = { scan: 'scanner', contract: 'contracts', rights: 'rights' };
+    const tab = tabMap[entry.type];
+    if (tab) switchTab(tab);
+
+    // Fill in input and render the result
+    if (entry.type === 'scan') {
+        document.getElementById('scanInput').value = entry.input || '';
+        if (entry.result) renderScanResult(entry.result, document.getElementById('scanResult'));
+    } else if (entry.type === 'contract') {
+        document.getElementById('contractInput').value = entry.input || '';
+        if (entry.result) renderContractResult(entry.result, document.getElementById('contractResult'));
+    } else if (entry.type === 'rights') {
+        document.getElementById('rightsInput').value = entry.input || '';
+        if (entry.result) renderRightsResult(entry.result, document.getElementById('rightsResult'));
+    }
+    lucide.createIcons();
+}
+
 // ---- Navigation ----
 
 function showApp(tab) {
@@ -220,9 +427,14 @@ function showLanding() {
 }
 
 function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+    });
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+    const activeTab = document.querySelector(`.tab[data-tab="${tab}"]`);
+    activeTab.classList.add('active');
+    activeTab.setAttribute('aria-selected', 'true');
     document.getElementById(`panel-${tab}`).classList.add('active');
 }
 
@@ -394,6 +606,9 @@ async function runScan() {
         const data = await res.json();
         renderScanResult(data, resultDiv);
 
+        // Save to local history
+        beaconHistory.save('scan', content || '[screenshot]', data);
+
         // Trigger trusted contact alert if dangerous
         if (data.trust_score <= 20) {
             triggerDangerAlert(data);
@@ -557,6 +772,9 @@ async function runContract() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         renderContractResult(data, resultDiv);
+
+        // Save to local history
+        beaconHistory.save('contract', content, data);
     } catch (err) {
         resultDiv.innerHTML = `
             <div class="result-placeholder">
@@ -711,6 +929,9 @@ async function runRights() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         renderRightsResult(data, resultDiv);
+
+        // Save to local history
+        beaconHistory.save('rights', situation, data);
     } catch (err) {
         resultDiv.innerHTML = `
             <div class="result-placeholder">
@@ -1016,6 +1237,42 @@ switchTab = function(tab) {
         loadAlertHistory();
     }
 };
+
+// ---- Keyboard Shortcuts (Accessibility) ----
+
+document.addEventListener('keydown', (e) => {
+    // Only active when app is visible
+    if (document.getElementById('app').style.display === 'none') return;
+
+    // Alt+1/2/3/4 to switch tabs
+    if (e.altKey && !e.ctrlKey && !e.shiftKey) {
+        switch (e.key) {
+            case '1': e.preventDefault(); switchTab('scanner'); break;
+            case '2': e.preventDefault(); switchTab('contracts'); break;
+            case '3': e.preventDefault(); switchTab('rights'); break;
+            case '4': e.preventDefault(); switchTab('settings'); break;
+            case 'h': e.preventDefault(); toggleHistoryDrawer(); break;
+        }
+    }
+
+    // Ctrl+Enter to submit the active form
+    if (e.ctrlKey && e.key === 'Enter') {
+        const activePanel = document.querySelector('.panel.active');
+        if (!activePanel) return;
+        const id = activePanel.id;
+        if (id === 'panel-scanner') runScan();
+        else if (id === 'panel-contracts') runContract();
+        else if (id === 'panel-rights') runRights();
+    }
+
+    // Escape to close history drawer
+    if (e.key === 'Escape') {
+        const drawer = document.getElementById('historyDrawer');
+        if (drawer && drawer.classList.contains('open')) {
+            toggleHistoryDrawer();
+        }
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();

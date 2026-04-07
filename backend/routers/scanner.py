@@ -19,6 +19,7 @@ class ScanRequest(BaseModel):
     content: str = ""
     context: str = ""
     image: str = ""  # Base64-encoded image for multimodal analysis
+    language: str = "en"
 
 
 class ScanResponse(BaseModel):
@@ -44,7 +45,7 @@ async def scan_message(req: ScanRequest):
         raise HTTPException(status_code=400, detail="Content exceeds 50,000 character limit")
 
     try:
-        result = await analyze_message(req.content, req.context, req.image)
+        result = await analyze_message(req.content, req.context, req.image, req.language)
         return ScanResponse(
             trust_score=result.get("trust_score", 50),
             risk_level=result.get("risk_level", "UNCERTAIN"),

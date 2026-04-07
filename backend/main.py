@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pathlib import Path
 
-from backend.routers import scanner, contracts, rights
+from backend.routers import scanner, contracts, rights, streaming, alerts
 from backend.ollama_client import check_model
 
 app = FastAPI(
@@ -27,6 +27,8 @@ app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="asset
 app.include_router(scanner.router)
 app.include_router(contracts.router)
 app.include_router(rights.router)
+app.include_router(streaming.router)
+app.include_router(alerts.router)
 
 
 @app.get("/")

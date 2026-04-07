@@ -19,7 +19,7 @@ def check_ollama():
         return False
 
 
-def pull_model(model="gemma4:12b"):
+def pull_model(model="gemma4:e4b"):
     """Pull the Gemma 4 model via Ollama."""
     print(f"Pulling {model}... This may take a few minutes on first run.")
     subprocess.run(["ollama", "pull", model], check=True)

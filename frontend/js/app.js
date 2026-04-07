@@ -2,6 +2,207 @@
    BEACON -- Application Logic
    ============================================ */
 
+// ---- Language System ----
+
+let currentLanguage = 'en';
+
+const UI_STRINGS = {
+    en: {
+        // Tabs
+        tabScanner: 'Scam Scanner',
+        tabContracts: 'Contract Reader',
+        tabRights: 'Rights Navigator',
+        // Scanner panel
+        scanHeading: 'Scan a Message',
+        scanSubheading: 'Paste any suspicious email, text, letter, or message below.',
+        scanPlaceholder: 'Paste the suspicious message here...\n\nExample: \'Dear valued customer, your account has been compromised. Click here immediately to verify your identity or your account will be permanently closed within 24 hours...\'',
+        scanContextPlaceholder: 'Optional: Add context (e.g., \'I received this via text from an unknown number\')',
+        scanBtn: 'Analyze Message',
+        scanExample: 'Try Example',
+        scanClear: 'Clear',
+        scanUpload: 'Upload Screenshot (multimodal)',
+        scanResultPlaceholder: 'Results will appear here',
+        scanResultHint: 'Paste a message and click "Analyze" to get started.',
+        // Contract panel
+        contractHeading: 'Analyze a Document',
+        contractSubheading: 'Paste contract text, lease terms, loan agreements, or any legal document.',
+        contractPlaceholder: 'Paste the contract or document text here...',
+        contractBtn: 'Analyze Document',
+        contractExample: 'Try Example',
+        contractClear: 'Clear',
+        contractResultPlaceholder: 'Results will appear here',
+        contractResultHint: 'Paste a document and click "Analyze" to get started.',
+        // Rights panel
+        rightsHeading: 'Know Your Rights',
+        rightsSubheading: 'Describe your situation and Beacon will explain your legal protections.',
+        rightsPlaceholder: 'Describe your situation...\n\nExample: \'My landlord is refusing to return my security deposit. I lived in the apartment for 2 years, left it clean, and gave 30 days notice. They say they\'re keeping it for normal wear and tear.\'',
+        rightsBtn: 'Find My Rights',
+        rightsExample: 'Try Example',
+        rightsClear: 'Clear',
+        rightsResultPlaceholder: 'Results will appear here',
+        rightsResultHint: 'Describe your situation and click "Find My Rights" to get started.',
+        // Loading
+        loadingDeepAnalysis: 'Running deep analysis with Gemma 4...',
+        loadingNoFlags: 'No instant red flags. Running deep analysis with Gemma 4...',
+        loadingAnalyzeScreenshot: 'Analyzing screenshot with Gemma 4 vision...',
+        loadingAnalyzeMessage: 'Analyzing message with Gemma 4...',
+        loadingDocument: 'Analyzing document with Gemma 4...',
+        loadingRights: 'Researching your rights with Gemma 4...',
+        // Errors
+        analysisFailed: 'Analysis failed',
+        // Common
+        back: 'Back',
+        remove: 'Remove',
+    },
+    es: {
+        tabScanner: 'Detector de Estafas',
+        tabContracts: 'Lector de Contratos',
+        tabRights: 'Navegador de Derechos',
+        scanHeading: 'Analizar un Mensaje',
+        scanSubheading: 'Pegue cualquier correo, texto o mensaje sospechoso a continuacion.',
+        scanPlaceholder: 'Pegue el mensaje sospechoso aqui...\n\nEjemplo: \'Estimado cliente, su cuenta ha sido comprometida. Haga clic aqui inmediatamente para verificar su identidad o su cuenta sera cerrada permanentemente en 24 horas...\'',
+        scanContextPlaceholder: 'Opcional: Agregue contexto (ej., \'Recibi esto por mensaje de un numero desconocido\')',
+        scanBtn: 'Analizar Mensaje',
+        scanExample: 'Probar Ejemplo',
+        scanClear: 'Limpiar',
+        scanUpload: 'Subir captura de pantalla',
+        scanResultPlaceholder: 'Los resultados apareceran aqui',
+        scanResultHint: 'Pegue un mensaje y haga clic en "Analizar" para comenzar.',
+        contractHeading: 'Analizar un Documento',
+        contractSubheading: 'Pegue texto de contrato, terminos de arrendamiento o cualquier documento legal.',
+        contractPlaceholder: 'Pegue el texto del contrato o documento aqui...',
+        contractBtn: 'Analizar Documento',
+        contractExample: 'Probar Ejemplo',
+        contractClear: 'Limpiar',
+        contractResultPlaceholder: 'Los resultados apareceran aqui',
+        contractResultHint: 'Pegue un documento y haga clic en "Analizar" para comenzar.',
+        rightsHeading: 'Conozca Sus Derechos',
+        rightsSubheading: 'Describa su situacion y Beacon le explicara sus protecciones legales.',
+        rightsPlaceholder: 'Describa su situacion...\n\nEjemplo: \'Mi arrendador se niega a devolver mi deposito de seguridad. Vivi en el apartamento por 2 anos, lo deje limpio y di 30 dias de aviso.\'',
+        rightsBtn: 'Buscar Mis Derechos',
+        rightsExample: 'Probar Ejemplo',
+        rightsClear: 'Limpiar',
+        rightsResultPlaceholder: 'Los resultados apareceran aqui',
+        rightsResultHint: 'Describa su situacion y haga clic en "Buscar Mis Derechos" para comenzar.',
+        loadingDeepAnalysis: 'Ejecutando analisis profundo con Gemma 4...',
+        loadingNoFlags: 'Sin alertas inmediatas. Ejecutando analisis profundo con Gemma 4...',
+        loadingAnalyzeScreenshot: 'Analizando captura con vision Gemma 4...',
+        loadingAnalyzeMessage: 'Analizando mensaje con Gemma 4...',
+        loadingDocument: 'Analizando documento con Gemma 4...',
+        loadingRights: 'Investigando sus derechos con Gemma 4...',
+        analysisFailed: 'El analisis fallo',
+        back: 'Volver',
+        remove: 'Eliminar',
+    },
+};
+
+function getStr(key) {
+    if (UI_STRINGS[currentLanguage] && UI_STRINGS[currentLanguage][key]) {
+        return UI_STRINGS[currentLanguage][key];
+    }
+    return UI_STRINGS.en[key] || key;
+}
+
+function changeLanguage(lang) {
+    currentLanguage = lang;
+    applyLanguageToUI();
+}
+
+function applyLanguageToUI() {
+    // Tabs
+    const tabLabels = document.querySelectorAll('.tab[data-tab] span');
+    const tabMap = { scanner: 'tabScanner', contracts: 'tabContracts', rights: 'tabRights' };
+    document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+        const key = tabMap[tab.dataset.tab];
+        if (key) {
+            const span = tab.querySelector('span');
+            if (span) span.textContent = getStr(key);
+        }
+    });
+
+    // Scanner panel
+    const scanHeader = document.querySelector('#panel-scanner .input-header h2');
+    if (scanHeader) scanHeader.textContent = getStr('scanHeading');
+    const scanSub = document.querySelector('#panel-scanner .input-header p');
+    if (scanSub) scanSub.textContent = getStr('scanSubheading');
+    const scanInput = document.getElementById('scanInput');
+    if (scanInput) scanInput.placeholder = getStr('scanPlaceholder');
+    const scanCtx = document.getElementById('scanContext');
+    if (scanCtx) scanCtx.placeholder = getStr('scanContextPlaceholder');
+    const scanBtn = document.getElementById('scanBtn');
+    if (scanBtn) {
+        const icon = scanBtn.querySelector('i');
+        scanBtn.innerHTML = '';
+        if (icon) scanBtn.appendChild(icon);
+        scanBtn.appendChild(document.createTextNode(' ' + getStr('scanBtn')));
+    }
+
+    // Contract panel
+    const contractHeader = document.querySelector('#panel-contracts .input-header h2');
+    if (contractHeader) contractHeader.textContent = getStr('contractHeading');
+    const contractSub = document.querySelector('#panel-contracts .input-header p');
+    if (contractSub) contractSub.textContent = getStr('contractSubheading');
+    const contractInput = document.getElementById('contractInput');
+    if (contractInput) contractInput.placeholder = getStr('contractPlaceholder');
+    const contractBtn = document.getElementById('contractBtn');
+    if (contractBtn) {
+        const icon = contractBtn.querySelector('i');
+        contractBtn.innerHTML = '';
+        if (icon) contractBtn.appendChild(icon);
+        contractBtn.appendChild(document.createTextNode(' ' + getStr('contractBtn')));
+    }
+
+    // Rights panel
+    const rightsHeader = document.querySelector('#panel-rights .input-header h2');
+    if (rightsHeader) rightsHeader.textContent = getStr('rightsHeading');
+    const rightsSub = document.querySelector('#panel-rights .input-header p');
+    if (rightsSub) rightsSub.textContent = getStr('rightsSubheading');
+    const rightsInput = document.getElementById('rightsInput');
+    if (rightsInput) rightsInput.placeholder = getStr('rightsPlaceholder');
+    const rightsBtn = document.getElementById('rightsBtn');
+    if (rightsBtn) {
+        const icon = rightsBtn.querySelector('i');
+        rightsBtn.innerHTML = '';
+        if (icon) rightsBtn.appendChild(icon);
+        rightsBtn.appendChild(document.createTextNode(' ' + getStr('rightsBtn')));
+    }
+
+    // Update example/clear button labels in each panel
+    document.querySelectorAll('.input-actions').forEach(actions => {
+        const panel = actions.closest('.panel');
+        if (!panel) return;
+        const panelId = panel.id;
+        const btns = actions.querySelectorAll('.btn-ghost');
+        btns.forEach(btn => {
+            const onclick = btn.getAttribute('onclick') || '';
+            if (onclick.includes('Example')) {
+                const icon = btn.querySelector('i');
+                const prefix = panelId === 'panel-scanner' ? 'scan' : panelId === 'panel-contracts' ? 'contract' : 'rights';
+                btn.innerHTML = '';
+                if (icon) btn.appendChild(icon);
+                btn.appendChild(document.createTextNode(' ' + getStr(prefix + 'Example')));
+            } else if (onclick.includes('clear') || onclick.includes('Clear')) {
+                const icon = btn.querySelector('i');
+                const prefix = panelId === 'panel-scanner' ? 'scan' : panelId === 'panel-contracts' ? 'contract' : 'rights';
+                btn.innerHTML = '';
+                if (icon) btn.appendChild(icon);
+                btn.appendChild(document.createTextNode(' ' + getStr(prefix + 'Clear')));
+            }
+        });
+    });
+
+    // Back button
+    const backBtn = document.querySelector('.app-nav-left .btn-ghost');
+    if (backBtn) {
+        const icon = backBtn.querySelector('i');
+        backBtn.innerHTML = '';
+        if (icon) backBtn.appendChild(icon);
+        backBtn.appendChild(document.createTextNode(' ' + getStr('back')));
+    }
+
+    lucide.createIcons();
+}
+
 // ---- Navigation ----
 
 function showApp(tab) {
@@ -156,19 +357,19 @@ async function runScan() {
                         </div>
                         <div class="loading-pulse">
                             <div class="loading-spinner"></div>
-                            <div class="loading-text">Running deep analysis with Gemma 4...</div>
+                            <div class="loading-text">${getStr('loadingDeepAnalysis')}</div>
                         </div>`;
                 } else {
                     resultDiv.innerHTML = `
                         <div class="loading-pulse">
                             <div class="loading-spinner"></div>
-                            <div class="loading-text">No instant red flags. Running deep analysis with Gemma 4...</div>
+                            <div class="loading-text">${getStr('loadingNoFlags')}</div>
                         </div>`;
                 }
             }
         } catch { /* pre-screen is best-effort */ }
     } else {
-        const analyzeMode = scanImageB64 ? 'Analyzing screenshot with Gemma 4 vision...' : 'Analyzing message with Gemma 4...';
+        const analyzeMode = scanImageB64 ? getStr('loadingAnalyzeScreenshot') : getStr('loadingAnalyzeMessage');
         resultDiv.innerHTML = `
             <div class="loading-pulse">
                 <div class="loading-spinner"></div>
@@ -184,18 +385,24 @@ async function runScan() {
             body: JSON.stringify({
                 content,
                 image: scanImageB64,
-                context: document.getElementById('scanContext').value.trim()
+                context: document.getElementById('scanContext').value.trim(),
+                language: currentLanguage
             })
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         renderScanResult(data, resultDiv);
+
+        // Trigger trusted contact alert if dangerous
+        if (data.trust_score <= 20) {
+            triggerDangerAlert(data);
+        }
     } catch (err) {
         resultDiv.innerHTML = `
             <div class="result-placeholder">
                 <i data-lucide="alert-triangle"></i>
-                <h3>Analysis failed</h3>
+                <h3>${getStr('analysisFailed')}</h3>
                 <p>${err.message}. Make sure Ollama is running with Gemma 4.</p>
             </div>`;
     } finally {
@@ -333,7 +540,7 @@ async function runContract() {
     resultDiv.innerHTML = `
         <div class="loading-pulse">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Analyzing document with Gemma 4...</div>
+            <div class="loading-text">${getStr('loadingDocument')}</div>
         </div>`;
 
     try {
@@ -342,7 +549,8 @@ async function runContract() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 content,
-                document_type: document.getElementById('contractType').value
+                document_type: document.getElementById('contractType').value,
+                language: currentLanguage
             })
         });
 
@@ -353,7 +561,7 @@ async function runContract() {
         resultDiv.innerHTML = `
             <div class="result-placeholder">
                 <i data-lucide="alert-triangle"></i>
-                <h3>Analysis failed</h3>
+                <h3>${getStr('analysisFailed')}</h3>
                 <p>${err.message}. Make sure Ollama is running with Gemma 4.</p>
             </div>`;
     } finally {
@@ -486,7 +694,7 @@ async function runRights() {
     resultDiv.innerHTML = `
         <div class="loading-pulse">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Researching your rights with Gemma 4...</div>
+            <div class="loading-text">${getStr('loadingRights')}</div>
         </div>`;
 
     try {
@@ -495,7 +703,8 @@ async function runRights() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 situation,
-                category: document.getElementById('rightsCategory').value
+                category: document.getElementById('rightsCategory').value,
+                language: currentLanguage
             })
         });
 
@@ -506,7 +715,7 @@ async function runRights() {
         resultDiv.innerHTML = `
             <div class="result-placeholder">
                 <i data-lucide="alert-triangle"></i>
-                <h3>Analysis failed</h3>
+                <h3>${getStr('analysisFailed')}</h3>
                 <p>${err.message}. Make sure Ollama is running with Gemma 4.</p>
             </div>`;
     } finally {
@@ -603,7 +812,210 @@ function renderRightsResult(data, container) {
     `;
 }
 
+// ---- Trusted Contacts & Alerts ----
+
+const RELATIONSHIP_LABELS = {
+    spouse: 'Spouse / Partner',
+    child: 'Son / Daughter',
+    parent: 'Parent',
+    sibling: 'Sibling',
+    caregiver: 'Caregiver',
+    friend: 'Friend',
+    other: 'Other',
+};
+
+async function loadContacts() {
+    try {
+        const res = await fetch('/api/alerts/contacts');
+        if (!res.ok) return;
+        const contacts = await res.json();
+        renderContactsList(contacts);
+    } catch { /* best-effort */ }
+}
+
+async function loadAlertHistory() {
+    try {
+        const res = await fetch('/api/alerts/history');
+        if (!res.ok) return;
+        const history = await res.json();
+        renderAlertHistory(history);
+    } catch { /* best-effort */ }
+}
+
+function renderContactsList(contacts) {
+    const container = document.getElementById('contactsList');
+    if (!contacts || contacts.length === 0) {
+        container.innerHTML = `
+            <div class="result-placeholder" style="padding:var(--space-xl);">
+                <i data-lucide="users"></i>
+                <h3>No contacts yet</h3>
+                <p>Add a trusted contact above to enable scam alerts.</p>
+            </div>`;
+        lucide.createIcons();
+        return;
+    }
+
+    container.innerHTML = contacts.map(c => {
+        const details = [c.email, c.phone].filter(Boolean).join(' | ');
+        const relLabel = RELATIONSHIP_LABELS[c.relationship] || c.relationship;
+        return `
+            <div class="contact-item">
+                <div class="contact-info">
+                    <div class="contact-name">${c.name}</div>
+                    ${details ? `<div class="contact-details">${details}</div>` : ''}
+                    <div class="contact-relationship">${relLabel}</div>
+                </div>
+                <div class="contact-delete">
+                    <button class="btn-danger" onclick="deleteContact('${c.id}')">
+                        <i data-lucide="trash-2"></i>
+                        Remove
+                    </button>
+                </div>
+            </div>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+function renderAlertHistory(history) {
+    const container = document.getElementById('alertHistory');
+    if (!history || history.length === 0) {
+        container.innerHTML = `
+            <div class="result-placeholder" style="padding:var(--space-xl);">
+                <i data-lucide="bell-off"></i>
+                <h3>No alerts yet</h3>
+                <p>Alerts will appear here when Beacon detects a dangerous scam.</p>
+            </div>`;
+        lucide.createIcons();
+        return;
+    }
+
+    container.innerHTML = history.map(alert => {
+        const time = new Date(alert.timestamp).toLocaleString();
+        const contacts = alert.contacts_notified ? alert.contacts_notified.join(', ') : 'None';
+        return `
+            <div class="alert-history-item">
+                <div class="alert-history-header">
+                    <div class="alert-history-score">Trust Score: ${alert.trust_score}/100</div>
+                    <div class="alert-history-time">${time}</div>
+                </div>
+                <div class="alert-history-type">${alert.scam_type || 'Unknown scam type'}</div>
+                <div class="alert-history-contacts"><strong>Contacts alerted:</strong> ${contacts}</div>
+            </div>`;
+    }).join('');
+    lucide.createIcons();
+}
+
+async function addContact() {
+    const name = document.getElementById('contactName').value.trim();
+    const email = document.getElementById('contactEmail').value.trim();
+    const phone = document.getElementById('contactPhone').value.trim();
+    const relationship = document.getElementById('contactRelationship').value;
+
+    if (!name) {
+        alert('Please enter a contact name.');
+        return;
+    }
+    if (!email && !phone) {
+        alert('Please enter at least an email or phone number.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/alerts/contacts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, relationship })
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            alert(err.detail || 'Failed to add contact');
+            return;
+        }
+
+        // Clear form
+        document.getElementById('contactName').value = '';
+        document.getElementById('contactEmail').value = '';
+        document.getElementById('contactPhone').value = '';
+        document.getElementById('contactRelationship').value = 'spouse';
+
+        // Reload contacts list
+        loadContacts();
+    } catch (err) {
+        alert('Failed to add contact: ' + err.message);
+    }
+}
+
+async function deleteContact(contactId) {
+    if (!confirm('Remove this trusted contact?')) return;
+
+    try {
+        const res = await fetch(`/api/alerts/contacts/${contactId}`, {
+            method: 'DELETE'
+        });
+        if (!res.ok) {
+            alert('Failed to remove contact');
+            return;
+        }
+        loadContacts();
+    } catch (err) {
+        alert('Failed to remove contact: ' + err.message);
+    }
+}
+
+async function triggerDangerAlert(scanResult) {
+    try {
+        const res = await fetch('/api/alerts/trigger', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                trust_score: scanResult.trust_score,
+                risk_level: scanResult.risk_level,
+                scam_type: scanResult.scam_type,
+                explanation: scanResult.explanation,
+                red_flags: scanResult.red_flags || [],
+                recommended_actions: scanResult.recommended_actions || [],
+                safe_alternatives: scanResult.safe_alternatives || ''
+            })
+        });
+
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data.status === 'triggered' && data.alert) {
+            const names = data.alert.contacts_notified.join(', ');
+            showAlertToast(`Alert sent to ${names}`);
+        }
+    } catch { /* alert triggering is best-effort */ }
+}
+
+function showAlertToast(message) {
+    const toast = document.getElementById('alertToast');
+    const msgEl = document.getElementById('alertToastMessage');
+    msgEl.textContent = message;
+    toast.style.display = 'block';
+    toast.style.animation = 'toastSlideIn 0.3s ease-out';
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.style.animation = 'toastSlideOut 0.3s ease-out forwards';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
+    }, 5000);
+}
+
 // ---- Initialize ----
+
+// Override switchTab to load settings data when settings tab is opened
+const _originalSwitchTab = switchTab;
+switchTab = function(tab) {
+    _originalSwitchTab(tab);
+    if (tab === 'settings') {
+        loadContacts();
+        loadAlertHistory();
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();

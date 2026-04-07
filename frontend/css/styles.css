@@ -619,6 +619,31 @@ a:hover {
 .app-nav-right {
     display: flex;
     align-items: center;
+    gap: var(--space-md);
+}
+
+.language-select {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: var(--bg-input);
+    cursor: pointer;
+    transition: border-color var(--transition);
+    min-width: 0;
+    max-width: 110px;
+}
+
+.language-select:hover {
+    border-color: var(--beacon-primary-light);
+}
+
+.language-select:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .status-indicator {
@@ -1128,6 +1153,16 @@ a:hover {
     .app-nav {
         padding: var(--space-sm);
     }
+
+    .language-select {
+        max-width: 80px;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.35rem;
+    }
+
+    .app-nav-right {
+        gap: var(--space-sm);
+    }
 }
 
 /* ============================================
@@ -1152,6 +1187,275 @@ a:hover {
         --border: #000;
         --text-secondary: #000;
         --text-muted: #333;
+    }
+}
+
+/* ============================================
+   Settings / Trusted Contacts Panel
+   ============================================ */
+
+.settings-layout {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+}
+
+.settings-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.settings-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+}
+
+.settings-header p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.contact-form-row {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.contact-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: var(--space-xs);
+}
+
+.contacts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition);
+}
+
+.contact-item:hover {
+    border-color: var(--beacon-primary-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.contact-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.contact-details {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.contact-relationship {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--info-bg);
+    color: var(--beacon-primary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    width: fit-content;
+}
+
+.contact-delete {
+    flex-shrink: 0;
+    margin-left: var(--space-md);
+}
+
+.btn-danger {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    transition: all var(--transition);
+}
+
+.btn-danger:hover {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+.btn-danger i, .btn-danger svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Alert History */
+
+.alert-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.alert-history-item {
+    padding: var(--space-md);
+    background: var(--danger-bg);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--danger);
+}
+
+.alert-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xs);
+}
+
+.alert-history-score {
+    font-weight: 700;
+    color: var(--danger);
+    font-size: 0.85rem;
+}
+
+.alert-history-time {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.alert-history-type {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #991b1b;
+    margin-bottom: var(--space-xs);
+}
+
+.alert-history-contacts {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.alert-history-contacts strong {
+    color: var(--text);
+}
+
+/* Alert Toast */
+
+.alert-toast {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 1000;
+    animation: toastSlideIn 0.3s ease-out;
+}
+
+.alert-toast-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--danger);
+    color: white;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.alert-toast-content i, .alert-toast-content svg {
+    width: 20px;
+    height: 20px;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+@media (max-width: 768px) {
+    .settings-layout {
+        padding: var(--space-md);
+    }
+
+    .contact-form-row {
+        flex-direction: column;
+    }
+
+    .contact-form-row > * {
+        flex: 1 1 auto !important;
+    }
+
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+
+    .contact-delete {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+
+    .alert-toast {
+        bottom: var(--space-md);
+        right: var(--space-md);
+        left: var(--space-md);
     }
 }
 

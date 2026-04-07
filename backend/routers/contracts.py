@@ -12,6 +12,7 @@ router = APIRouter(prefix="/api/contract", tags=["contracts"])
 class ContractRequest(BaseModel):
     content: str
     document_type: str = ""
+    language: str = "en"
 
 
 @router.post("")
@@ -23,7 +24,7 @@ async def analyze(req: ContractRequest):
         raise HTTPException(status_code=400, detail="Content exceeds 100,000 character limit")
 
     try:
-        result = await analyze_contract(req.content, req.document_type)
+        result = await analyze_contract(req.content, req.document_type, req.language)
         return JSONResponse(content=result)
     except Exception as e:
         traceback.print_exc()

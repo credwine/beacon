@@ -7,11 +7,21 @@ from backend.ollama_client import chat
 SYSTEM_PROMPT = (Path(__file__).parent.parent / "prompts" / "rights_system.txt").read_text()
 
 
-async def navigate_rights(situation: str, category: str = "") -> dict:
+LANGUAGE_NAMES = {
+    "en": "English", "es": "Spanish", "zh": "Chinese (Simplified)",
+    "vi": "Vietnamese", "ko": "Korean", "tl": "Tagalog",
+    "ar": "Arabic", "fr": "French", "ru": "Russian", "hi": "Hindi",
+}
+
+
+async def navigate_rights(situation: str, category: str = "", language: str = "en") -> dict:
     """Help a user understand their rights in a given situation."""
     user_prompt = f"I need help understanding my rights in this situation:\n\n{situation}"
     if category:
         user_prompt += f"\n\nThis relates to: {category}"
+    if language != "en" and language in LANGUAGE_NAMES:
+        lang_name = LANGUAGE_NAMES[language]
+        user_prompt += f"\n\nIMPORTANT: Respond entirely in {lang_name}. All explanations, red flags, actions, and alternatives must be in {lang_name}."
 
     messages = [{"role": "user", "content": user_prompt}]
     result = await chat(messages=messages, system=SYSTEM_PROMPT)

@@ -223,8 +223,24 @@
                     <i data-lucide="scale"></i>
                     <span>Rights Navigator</span>
                 </button>
+                <button class="tab" data-tab="settings" onclick="switchTab('settings')">
+                    <i data-lucide="settings"></i>
+                    <span>Settings</span>
+                </button>
             </div>
             <div class="app-nav-right">
+                <select id="languageSelector" class="language-select" onchange="changeLanguage(this.value)" aria-label="Select language">
+                    <option value="en">English</option>
+                    <option value="es">Espanol</option>
+                    <option value="zh">中文</option>
+                    <option value="vi">Tieng Viet</option>
+                    <option value="ko">한국어</option>
+                    <option value="tl">Tagalog</option>
+                    <option value="ar">العربية</option>
+                    <option value="fr">Francais</option>
+                    <option value="ru">Русский</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
                 <div class="status-indicator" id="statusIndicator">
                     <span class="status-dot"></span>
                     <span class="status-text">Checking...</span>
@@ -394,7 +410,95 @@ Example: 'My landlord is refusing to return my security deposit. I lived in the 
                 </div>
             </div>
         </div>
+
+        <!-- Settings Panel -->
+        <div id="panel-settings" class="panel">
+            <div class="settings-layout">
+                <div class="settings-main">
+                    <div class="settings-header">
+                        <h2>Trusted Contacts</h2>
+                        <p>Designate family members or caregivers who should be alerted when Beacon detects a dangerous scam. When a scan returns a trust score below 20 (DANGEROUS), your trusted contacts will be notified.</p>
+                    </div>
+
+                    <!-- Add Contact Form -->
+                    <div class="settings-section">
+                        <div class="result-section-title">Add a Trusted Contact</div>
+                        <div class="result-card">
+                            <div class="contact-form">
+                                <div class="contact-form-row">
+                                    <input type="text" id="contactName" class="input-context" placeholder="Full name" style="flex:1;">
+                                    <select id="contactRelationship" class="input-select" style="flex:0 0 180px;">
+                                        <option value="spouse">Spouse / Partner</option>
+                                        <option value="child">Son / Daughter</option>
+                                        <option value="parent">Parent</option>
+                                        <option value="sibling">Sibling</option>
+                                        <option value="caregiver">Caregiver</option>
+                                        <option value="friend">Friend</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="contact-form-row">
+                                    <input type="email" id="contactEmail" class="input-context" placeholder="Email address" style="flex:1;">
+                                    <input type="tel" id="contactPhone" class="input-context" placeholder="Phone number" style="flex:1;">
+                                </div>
+                                <div class="contact-form-actions">
+                                    <button class="btn btn-primary" onclick="addContact()">
+                                        <i data-lucide="user-plus"></i>
+                                        Add Contact
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Contacts List -->
+                    <div class="settings-section">
+                        <div class="result-section-title">Your Trusted Contacts</div>
+                        <div id="contactsList" class="contacts-list">
+                            <div class="result-placeholder" style="padding:var(--space-xl);">
+                                <i data-lucide="users"></i>
+                                <h3>No contacts yet</h3>
+                                <p>Add a trusted contact above to enable scam alerts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- How It Works Explainer -->
+                    <div class="settings-section">
+                        <div class="result-section-title">How Trusted Contact Alerts Work</div>
+                        <div class="result-card" style="border-left:3px solid var(--beacon-primary);">
+                            <div class="result-text">
+                                <strong>1. You scan a message</strong> using the Scam Scanner as normal.<br>
+                                <strong>2. Beacon detects danger</strong> -- if the trust score is 20 or below (DANGEROUS), an alert is triggered automatically.<br>
+                                <strong>3. Your contacts are notified</strong> -- an alert record is created with the scam details. In a future update, this will send SMS or email notifications to your trusted contacts.<br>
+                                <strong>4. Everything stays local</strong> -- alert records are stored on your device only. No data is sent to any cloud service.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert History -->
+                    <div class="settings-section">
+                        <div class="result-section-title">Alert History</div>
+                        <div id="alertHistory" class="alert-history">
+                            <div class="result-placeholder" style="padding:var(--space-xl);">
+                                <i data-lucide="bell-off"></i>
+                                <h3>No alerts yet</h3>
+                                <p>Alerts will appear here when Beacon detects a dangerous scam.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
+
+    <!-- Alert Toast Notification -->
+    <div id="alertToast" class="alert-toast" style="display:none;">
+        <div class="alert-toast-content">
+            <i data-lucide="bell-ring"></i>
+            <span id="alertToastMessage">Alert sent to contacts</span>
+        </div>
+    </div>
 
     <script src="/js/app.js"></script>
 </body>

@@ -61,11 +61,23 @@ SCAM_ANALYSIS_TOOL = {
 }
 
 
-async def analyze_message(content: str, context: str = "", image_b64: str = "") -> dict:
+LANGUAGE_NAMES = {
+    "en": "English", "es": "Spanish", "zh": "Chinese (Simplified)",
+    "vi": "Vietnamese", "ko": "Korean", "tl": "Tagalog",
+    "ar": "Arabic", "fr": "French", "ru": "Russian", "hi": "Hindi",
+}
+
+
+async def analyze_message(content: str, context: str = "", image_b64: str = "", language: str = "en") -> dict:
     """Analyze a message for scam indicators using Gemma 4.
 
     Supports text-only or multimodal (text + image) analysis.
     """
+    lang_instruction = ""
+    if language != "en" and language in LANGUAGE_NAMES:
+        lang_name = LANGUAGE_NAMES[language]
+        lang_instruction = f"\n\nIMPORTANT: Respond entirely in {lang_name}. All explanations, red flags, actions, and alternatives must be in {lang_name}."
+
     if image_b64:
         # Multimodal: analyze screenshot/photo with Gemma 4 vision
         user_prompt = "Analyze this image for scam or fraud indicators. Extract any text visible in the image and evaluate it for signs of fraud, phishing, or manipulation."
@@ -73,11 +85,13 @@ async def analyze_message(content: str, context: str = "", image_b64: str = "") 
             user_prompt += f"\n\nThe user also provided this text context:\n---\n{content}\n---"
         if context:
             user_prompt += f"\n\nAdditional context: {context}"
+        user_prompt += lang_instruction
         messages = [{"role": "user", "content": user_prompt, "images": [image_b64]}]
     else:
         user_prompt = f"Analyze the following message for scam or fraud indicators:\n\n---\n{content}\n---"
         if context:
             user_prompt += f"\n\nAdditional context from the user: {context}"
+        user_prompt += lang_instruction
         messages = [{"role": "user", "content": user_prompt}]
 
     # Try function calling first

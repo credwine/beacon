@@ -56,7 +56,7 @@ Describe your situation and get:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/forgeDev-studio/beacon.git
+git clone https://github.com/credwine/beacon.git
 cd beacon
 
 # 2. Install dependencies

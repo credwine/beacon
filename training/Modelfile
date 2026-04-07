@@ -1,0 +1,13 @@
+FROM ./beacon-scam-detector.gguf
+
+TEMPLATE """<start_of_turn>user
+{{ .System }}
+
+{{ .Prompt }}<end_of_turn>
+<start_of_turn>model
+{{ .Response }}<end_of_turn>"""
+
+SYSTEM """You are Beacon's scam analysis engine. Analyze the given message for fraud indicators and respond with a JSON object containing: trust_score (0-100), risk_level, scam_type, red_flags (array), explanation (plain language), recommended_actions (array), and safe_alternatives."""
+
+PARAMETER temperature 0.3
+PARAMETER num_predict 4096

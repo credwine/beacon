@@ -8,9 +8,9 @@ Beacon uses Google's Gemma 4 running entirely on your device to detect scams, ex
 
 ## The Problem
 
-Fraud costs Americans **$28.3 billion annually** (FTC, 2023). One in three seniors is targeted by scams each year. Immigrants, elderly, and low-income communities are disproportionately affected -- and they're the least likely to have access to tools that can help.
+Americans reported losing over **$10 billion to fraud** in 2023 (FTC) -- and only 5% of fraud gets reported. Seniors lose an average of **$33,915 per scam incident** (FBI IC3). The only mainstream AI scam checker -- Norton Genie -- was shut down in 2024, leaving a gaping void.
 
-Existing solutions require cloud processing (your sensitive documents leave your device), paid subscriptions (the people who need it most can't afford it), or technical expertise (the people who need it most don't have it).
+Existing solutions require cloud processing (your sensitive documents leave your device), paid subscriptions (the people who need it most can't afford it), or technical expertise (the people who need it most don't have it). Scammers have adopted AI. Their victims haven't been given AI to fight back.
 
 ## The Solution
 

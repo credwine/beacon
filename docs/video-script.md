@@ -10,12 +10,12 @@ NARRATOR (Corey, voiceover):
 
 "She's not alone."
 
-- $28.3 billion lost to fraud in 2023
-- 1 in 3 seniors targeted by scams each year
-- Immigrants sign predatory contracts in a language they're still learning
-- Workers don't know their rights when employers break the law
+- $10 billion in reported fraud losses in 2023 -- and only 5% gets reported
+- Seniors lose an average of $33,915 per scam
+- The only AI scam checker, Norton Genie, was shut down in 2024
+- Scammers have AI now. Their victims don't.
 
-"The people who need protection the most are the least likely to have it."
+"The people who need protection the most are the least likely to have it. And the only tool that tried to help was killed off."
 
 ---
 

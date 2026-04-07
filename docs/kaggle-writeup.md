@@ -7,11 +7,11 @@ Using Gemma 4's local inference and function calling to protect the people who n
 
 ## The Problem Nobody Talks About
 
-Americans lost $28.3 billion to fraud in 2023. Behind that number are real people: a grandmother who lost her savings to a phone scam, an immigrant who signed a predatory lease they couldn't read, a worker fired in retaliation who didn't know their rights.
+Americans reported losing over $10 billion to fraud in 2023 (FTC), and that is only the 5% that gets reported. True losses may exceed $200 billion annually. Seniors lose an average of $33,915 per scam incident (FBI IC3). Behind every number is a real person: a grandmother who lost her savings to a phone scam, an immigrant who signed a predatory lease they could not fully read, a worker fired in retaliation who did not know their rights.
 
-The people most vulnerable to exploitation are the least likely to have tools that protect them. Enterprise fraud detection exists for banks and corporations. Consumer solutions require cloud processing (your sensitive documents leave your device), paid subscriptions (the people who need it most can't afford it), or technical expertise (the people who need it most don't have it).
+The only mainstream AI scam checker -- Norton Genie -- was shut down in 2024, leaving a gaping void. The tools that remain require cloud processing (your sensitive documents leave your device), paid subscriptions (the people who need it most cannot afford them), or technical expertise (the people who need it most do not have it). Scammers have adopted AI to craft more convincing attacks. Their victims have not been given AI to fight back.
 
-What if everyone had a guardian angel for the digital world -- one that never sleeps, never judges, and never shares your secrets?
+Until now.
 
 ## Enter Beacon
 

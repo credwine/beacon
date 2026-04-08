@@ -208,7 +208,14 @@ def send_alert(result: dict):
 
     log.warning(f"ALERT: {title} -- {message}")
 
-    # Method 1: win10toast (most reliable on Windows)
+    # Method 0: Persistent always-on-top window (stays until dismissed)
+    try:
+        from guard.alert_window import show_alert
+        show_alert(title=f"{threat_type} detected", message=f"{description}. {recommendation}", severity=result.get("severity", "high"))
+    except Exception:
+        pass
+
+    # Method 1: win10toast backup
     if _toaster:
         try:
             icon_path = str(Path(__file__).parent.parent / "frontend" / "assets" / "beacon.ico")
@@ -216,7 +223,7 @@ def send_alert(result: dict):
                 title,
                 message,
                 icon_path=icon_path if Path(icon_path).exists() else None,
-                duration=10,
+                duration=30,
                 threaded=True,
             )
             return

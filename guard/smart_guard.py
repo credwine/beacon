@@ -178,23 +178,32 @@ def analyze_text(text: str) -> dict:
 # ---- Notification ----
 
 def send_alert(result: dict, source: str):
-    """Send Windows notification."""
-    severity = result.get("severity", "high").upper()
-    title = f"Beacon Guard -- {severity} THREAT"
+    """Send persistent alert that stays until user dismisses it."""
+    severity = result.get("severity", "high")
     flags = result.get("flags", [])
-    message = f"Detected: {', '.join(f.split(': ')[0] for f in flags[:3])}. {result.get('recommendation', '')}"
+    flag_names = ", ".join(f.split(": ")[0] for f in flags[:3])
+    title = f"{flag_names} detected"
+    message = f"{result.get('recommendation', 'Do not click any links or enter personal information.')}"
 
-    log.warning(f"ALERT [{source}]: {title}")
+    log.warning(f"ALERT [{source}]: {severity.upper()} -- {title}")
     for f in flags:
         log.warning(f"  {f}")
 
+    # Persistent always-on-top window (stays until dismissed)
+    try:
+        from guard.alert_window import show_alert
+        show_alert(title=title, message=message, severity=severity)
+    except Exception:
+        pass
+
+    # Also send a toast as backup
     if _toaster:
         try:
             icon_path = str(Path(__file__).parent.parent / "frontend" / "assets" / "beacon.ico")
             _toaster.show_toast(
-                title, message,
+                f"Beacon Guard -- {severity.upper()}", f"{title}. {message}",
                 icon_path=icon_path if Path(icon_path).exists() else None,
-                duration=10,
+                duration=30,
                 threaded=True,
             )
         except Exception:

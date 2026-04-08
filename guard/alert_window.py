@@ -110,7 +110,8 @@ def show_alert(title: str, message: str, severity: str = "high"):
         root.mainloop()
 
     # Run in a separate thread so it doesn't block the guard loop
-    t = threading.Thread(target=_create_window, daemon=True)
+    # daemon=False so the window survives even if the caller exits
+    t = threading.Thread(target=_create_window, daemon=False)
     t.start()
 
 

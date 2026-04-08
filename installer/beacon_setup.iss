@@ -19,8 +19,8 @@
 [Setup]
 AppName=Beacon
 AppVersion=1.0.0
-AppPublisher=Forge Dev.studio
-AppPublisherURL=https://forgedev.studio
+AppPublisher=Corey Redwine
+AppPublisherURL=https://github.com/credwine/beacon
 AppSupportURL=https://github.com/credwine/beacon
 DefaultDirName={autopf}\Beacon
 DefaultGroupName=Beacon

@@ -184,7 +184,7 @@ MIT License. See [LICENSE](LICENSE).
 
 ## Team
 
-Built by [Forge Dev.studio](https://forgedev.studio)
+Built by Corey Redwine
 
 ---
 

@@ -190,7 +190,13 @@ def send_alert(result: dict, source: str):
 
     if _toaster:
         try:
-            _toaster.show_toast(title, message, duration=10, threaded=True)
+            icon_path = str(Path(__file__).parent.parent / "frontend" / "assets" / "beacon.ico")
+            _toaster.show_toast(
+                title, message,
+                icon_path=icon_path if Path(icon_path).exists() else None,
+                duration=10,
+                threaded=True,
+            )
         except Exception:
             pass
 

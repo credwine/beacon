@@ -32,7 +32,7 @@ except ImportError:
     print("Install Pillow: pip install Pillow")
 
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-GEMMA_MODEL = os.getenv("GEMMA_MODEL", "gemma4:e4b")
+GEMMA_MODEL = os.getenv("GUARD_MODEL", "gemma4:e2b")  # E2B for vision -- fits in memory alongside main app
 
 app = FastAPI(title="Beacon Guard Monitor")
 
@@ -114,12 +114,6 @@ async def guard_loop():
             img_b64 = capture_and_encode()
             guard_state["last_screenshot_b64"] = img_b64
 
-            # Simple change detection via hash comparison
-            if img_b64[:200] == last_b64[:200]:
-                await asyncio.sleep(3)
-                continue
-            last_b64 = img_b64
-
             guard_state["checks"] += 1
             result = await analyze(img_b64)
             guard_state["last_check_ms"] = result.get("latency_ms", 0)
@@ -147,7 +141,7 @@ async def guard_loop():
                 "error": str(e),
             })
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
 
 
 @app.on_event("startup")

@@ -45,7 +45,7 @@ except ImportError:
 # ---- Configuration ----
 
 OLLAMA_URL = "http://localhost:11434"
-GEMMA_MODEL = "gemma4:e4b"
+GEMMA_MODEL = "gemma4:e2b"  # E2B for vision -- smaller footprint for background monitoring
 ALERT_THRESHOLD = 85  # Only notify if threat confidence >= this
 CHECK_INTERVAL = 7    # Seconds between checks
 CHANGE_THRESHOLD = 5  # Percentage of pixels that must change to trigger analysis
